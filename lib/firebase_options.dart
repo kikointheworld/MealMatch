@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -67,15 +64,28 @@ class DefaultFirebaseOptions {
     messagingSenderId: '374587675989',
     projectId: 'mealmatch-632dd',
     storageBucket: 'mealmatch-632dd.appspot.com',
+    iosClientId: '374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75.apps.googleusercontent.com',
     iosBundleId: 'com.example.mealmatch',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyC31QSIzPBAhRj_W5IbG3UY0yhBnVYlfLQ',
-    appId: '1:374587675989:ios:31327a96552c216950cbdc',
+    appId: '1:374587675989:ios:670f42de1b33f63f50cbdc',
     messagingSenderId: '374587675989',
     projectId: 'mealmatch-632dd',
     storageBucket: 'mealmatch-632dd.appspot.com',
-    iosBundleId: 'com.example.mealmatch.RunnerTests',
+    iosClientId: '374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75.apps.googleusercontent.com',
+    iosBundleId: 'com.example.mealmatch',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDf5YmgiKSmDRU6m2DdlY13K2wMFGdvZzw',
+    appId: '1:374587675989:web:2014d29332e458f450cbdc',
+    messagingSenderId: '374587675989',
+    projectId: 'mealmatch-632dd',
+    authDomain: 'mealmatch-632dd.firebaseapp.com',
+    storageBucket: 'mealmatch-632dd.appspot.com',
+    measurementId: 'G-8W6SS9YF0D',
+  );
+
 }

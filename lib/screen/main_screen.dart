@@ -1,10 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mealmatch/config/palette.dart';
 import 'package:mealmatch/screen/map_screen.dart';
+
+class Login extends StatefulWidget {
+  const Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
 
 class LoginSignUpScreen extends StatefulWidget {
   const LoginSignUpScreen({super.key});
@@ -22,6 +38,44 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
   String userName = '';
   String userEmail = '';
   String userPassword = '';
+
+  // GOOGLE LOGIN IMPLEMENTATION
+  void signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
+      userName = value.user!.displayName!;
+      userEmail = value.user!.email!;
+      userPassword = "defaultPassword";
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return MapScreen();
+        }),
+      );
+      print(userName);
+      print(userEmail);
+      print(userPassword);
+      // print(value.user?.email); // user email
+      // print(value.user?.displayName); // user name
+      // print(value.user?.phoneNumber); // user phonenumber
+      // print(value.user?.photoURL); // user picture
+    }).onError((error, stackTrace) {
+      print("error $error"); // error show
+    });
+  }
 
   void _tryValidation() {
     final isValid = _formkey.currentState!.validate();
@@ -523,7 +577,9 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                     height: 10,
                   ),
                   TextButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        signInWithGoogle();
+                      },
                       style: TextButton.styleFrom(
                           foregroundColor: Colors.white,
                           minimumSize: Size(155, 40),
