@@ -39,6 +39,10 @@ dependencies:
   cloud_firestore: ^4.16.1
   firebase_auth: ^4.19.4
   google_sign_in: ^6.2.1
+  flutter_naver_map: ^1.1.1
+  geolocator: ^10.1.0
+  sliding_up_panel:
+  carousel_slider:
 
 dev_dependencies:
   flutter_test:

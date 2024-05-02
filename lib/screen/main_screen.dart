@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mealmatch/config/palette.dart';
-import 'package:mealmatch/screen/map_screen.dart';
+import 'package:mealmatch/screen/home_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
