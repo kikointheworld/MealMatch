@@ -39,6 +39,14 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
   String userEmail = '';
   String userPassword = '';
 
+  // 이사람 사진
+
+  // 성별
+  // 자기 소개하는 말
+  // notification setting
+  // dietary preference
+  // manage reviews
+
   // GOOGLE LOGIN IMPLEMENTATION
   void signInWithGoogle() async {
     // Trigger the authentication flow
@@ -101,7 +109,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Palette.backgroundColor,
+      backgroundColor: Palette.background,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -117,7 +125,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                 height: 300,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: AssetImage('image/main.jpeg'), fit: BoxFit.fill),
+                      image: AssetImage('image/main.png'), fit: BoxFit.fill),
                 ),
                 child: Container(
                   padding: EdgeInsets.only(top: 90, left: 20),
@@ -126,31 +134,32 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                     children: [
                       RichText(
                         text: TextSpan(
-                            text: 'Welcome',
+                            // text: 'Welcome',
+                            text: '',
                             style: TextStyle(
                                 letterSpacing: 1.0,
                                 fontSize: 25,
-                                color: Colors.white),
+                                color: Palette.text),
                             children: [
                               TextSpan(
-                                  text: isSignupScreen
-                                      ? ' to MealMatch!'
-                                      : ' back',
+                                  text: isSignupScreen ? ' ' : ' ',
+                                  // ? ' to MealMatch!'
+                                  // : ' back',
                                   style: TextStyle(
                                       letterSpacing: 1.0,
                                       fontSize: 25,
-                                      color: Colors.white,
+                                      color: Palette.text,
                                       fontWeight: FontWeight.bold))
                             ]),
                       ),
                       SizedBox(height: 5.0),
                       Text(
-                        isSignupScreen
-                            ? "Signup to continue"
-                            : "Signing to continue",
+                        isSignupScreen ? "" : "",
+                        // ? "Signup to continue"
+                        // : "Signing to continue",
                         style: TextStyle(
                           letterSpacing: 1.0,
-                          color: Colors.white,
+                          color: Palette.text,
                         ),
                       ),
                     ],
@@ -200,7 +209,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: !isSignupScreen
-                                          ? Palette.activeColor
+                                          ? Palette.primary200
                                           : Palette.textColor1),
                                 ),
                                 if (!isSignupScreen)
@@ -208,7 +217,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                                     margin: EdgeInsets.only(top: 3),
                                     height: 2,
                                     width: 55,
-                                    color: Colors.orange,
+                                    color: Palette.primary300,
                                   )
                               ],
                             ),
@@ -227,7 +236,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: isSignupScreen
-                                          ? Palette.activeColor
+                                          ? Palette.primary200
                                           : Palette.textColor1),
                                 ),
                                 if (isSignupScreen)
@@ -235,7 +244,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                                     margin: EdgeInsets.only(top: 3),
                                     height: 2,
                                     width: 55,
-                                    color: Colors.orange,
+                                    color: Palette.primary300,
                                   )
                               ],
                             ),
@@ -512,7 +521,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                             SnackBar(
                               content:
                                   Text('Please check your email and password'),
-                              backgroundColor: Colors.blue,
+                              backgroundColor: Palette.primary300,
                             ),
                           );
                         }
@@ -539,7 +548,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                            colors: [Colors.orange, Colors.red],
+                            colors: [Palette.primary200, Palette.primary300],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight),
                         borderRadius: BorderRadius.circular(30),
@@ -585,7 +594,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                           minimumSize: Size(155, 40),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
-                          backgroundColor: Palette.googleColor),
+                          backgroundColor: Palette.primary300),
                       icon: Icon(Icons.add),
                       label: Text('Google')),
                 ],

@@ -27,7 +27,7 @@ class _MyPageState extends State<MyPage> {
                       children: <Widget>[
                         CircleAvatar(
                           radius: 40,
-                          backgroundImage: NetworkImage('your-profile-image-url'),
+                          backgroundImage: AssetImage('image/human.jpeg'),
                         ),
                         Positioned(
                           right: -9,
@@ -40,7 +40,10 @@ class _MyPageState extends State<MyPage> {
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
-                              icon: const Icon(Icons.edit, size: 18, ),
+                              icon: const Icon(
+                                Icons.edit,
+                                size: 18,
+                              ),
                               onPressed: () {
                                 // 사진 변경 로직
                               },
@@ -54,8 +57,11 @@ class _MyPageState extends State<MyPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('Tamer', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                          Text('I\'m not vegan', style: TextStyle(fontSize: 16)),
+                          Text('Tamer',
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold)),
+                          Text('I\'m not vegan',
+                              style: TextStyle(fontSize: 16)),
                         ],
                       ),
                     ),

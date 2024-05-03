@@ -7,10 +7,10 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NaverMapSdk.instance.initialize(
-    clientId: 'nyzcf5qljz',
-    onAuthFailed: (ex){
-      print("****네이버맵 인증오류: $ex ****");
-      /*
+      clientId: 'nyzcf5qljz',
+      onAuthFailed: (ex) {
+        print("****네이버맵 인증오류: $ex ****");
+        /*
       * 401
       * 잘못된 클라이언트 ID 지정
       * 잘못된 클라이언트 유형 사용
@@ -21,16 +21,11 @@ void main() async {
       * 800
       * 클라이언트 ID 미지정
       * */
-    }
-  );
+      });
+
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyBeXxcAvrpKW0n-DuF9ZLqetiIYerVpdKw",
-        appId: "1:374587675989:android:642745c65a185ccc50cbdc",
-        messagingSenderId: "374587675989",
-        projectId: "mealmatch-632dd",
-        storageBucket: "mealmatch-632dd.appspot.com",
-      )
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
 }
@@ -48,4 +43,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
