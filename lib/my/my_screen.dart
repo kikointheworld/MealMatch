@@ -1,4 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:mealmatch/my/dietary_preferences.dart';
+import 'package:mealmatch/my/edit_profile_info.dart';
+import 'package:mealmatch/my/manage_reviews.dart';
+import 'package:mealmatch/my/notification_settings.dart';
+import 'package:mealmatch/my/settings.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -72,28 +80,49 @@ class _MyPageState extends State<MyPage> {
                 title: Text('Edit Profile Info'),
                 trailing: Icon(Icons.arrow_forward_ios),
                 onTap: () {
-                  // 탭 이동 로직
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => EditProfileInfoPage(
+                      initialUserName: "Tamer",
+                      initialEmail: "tamer@gmail.com",
+                    ),
+                  ));
                 },
               ),
               ListTile(
                 title: Text('Notification Settings'),
                 trailing: Icon(Icons.arrow_forward_ios),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => NotificationSettingsPage(),
+                  ));
+                },
               ),
               ListTile(
                 title: Text('Dietary Preferences'),
                 trailing: Icon(Icons.arrow_forward_ios),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => DietaryPreferencesPage(),
+                  ));
+                },
               ),
               ListTile(
                 title: Text('Manage Reviews'),
                 trailing: Icon(Icons.arrow_forward_ios),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ManageReviewsPage(),
+                  ));
+                },
               ),
               ListTile(
                 title: Text('Settings'),
                 trailing: Icon(Icons.arrow_forward_ios),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SettingsPage(),
+                  ));
+                },
               ),
             ],
           ),
