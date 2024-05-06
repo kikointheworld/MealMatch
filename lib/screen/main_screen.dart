@@ -83,6 +83,8 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
     }).onError((error, stackTrace) {
       print("error $error"); // error show
     });
+
+
   }
 
   void _tryValidation() {
@@ -98,6 +100,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    // fetchData();
   }
 
   @override

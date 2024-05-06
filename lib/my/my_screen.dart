@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:mealmatch/services/data_manager.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -10,6 +12,9 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
+    // Accessing DataManager instance
+    final dataManager = Provider.of<DataManager>(context);
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -68,8 +73,17 @@ class _MyPageState extends State<MyPage> {
                   ],
                 ),
               ),
+              // ListTile(
+              //   title: Text('Edit Profile Info'),
+              //   trailing: Icon(Icons.arrow_forward_ios),
+              //   onTap: () {
+              //     // 탭 이동 로직
+              //   },
+              // ),
               ListTile(
-                title: Text('Edit Profile Info'),
+                title: Text(dataManager.restaurants.isNotEmpty
+                    ? dataManager.restaurants[0]?.name ?? 'No Restaurant'
+                    : 'No Restaurant'),
                 trailing: Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   // 탭 이동 로직
