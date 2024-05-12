@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Info.plist -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Our application needs access to your photo library for profile photo uploads.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Our application needs access to your camera for taking profile photos.</string>
+
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

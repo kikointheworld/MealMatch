@@ -10,10 +10,7 @@ import 'package:flutter/foundation.dart'
 /// ```dart
 /// import 'firebase_options.dart';
 /// // ...
-/// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
-/// ```
+
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -64,7 +61,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '374587675989',
     projectId: 'mealmatch-632dd',
     storageBucket: 'mealmatch-632dd.appspot.com',
-    iosClientId: '374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75.apps.googleusercontent.com',
+    iosClientId:
+        '374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75.apps.googleusercontent.com',
     iosBundleId: 'com.example.mealmatch',
   );
 
@@ -74,7 +72,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '374587675989',
     projectId: 'mealmatch-632dd',
     storageBucket: 'mealmatch-632dd.appspot.com',
-    iosClientId: '374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75.apps.googleusercontent.com',
+    iosClientId:
+        '374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75.apps.googleusercontent.com',
     iosBundleId: 'com.example.mealmatch',
   );
 
@@ -87,5 +86,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'mealmatch-632dd.appspot.com',
     measurementId: 'G-8W6SS9YF0D',
   );
-
 }
