@@ -33,14 +33,15 @@ class RestaurantInfoWidget extends StatelessWidget {
           items: mainImages.map((item) => Image.network(item, fit: BoxFit.cover)).toList(),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             children: <Widget>[
-              Text("$name  ", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+              const SizedBox(width: 8,),
               Text(category, textAlign: TextAlign.right),
-              Spacer(),
+              const Spacer(),
               IconButton(
-                icon: Icon(Icons.favorite_border),
+                icon: const Icon(Icons.favorite_border),
                 onPressed: () {
                   // Favorite logic
                 },
@@ -49,39 +50,51 @@ class RestaurantInfoWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: Text(address),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Text(address, overflow: TextOverflow.ellipsis,),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: Text(openingHours),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Text(openingHours), // 들어갈 내용인지는 애매함.
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         buildHorizontalReviewList(reviews),
+        const SizedBox(height: 20.0,),
       ],
     );
   }
 
   Widget buildHorizontalReviewList(List<dynamic> reviews) {
+    PageController controller = PageController(viewportFraction: 0.95);
+
     return Container(
       height: 120,
-      child: ListView.builder(
-
-        scrollDirection: Axis.horizontal,
+      child: PageView.builder(
+        controller: controller,
         itemCount: reviews.length,
         itemBuilder: (context, index) {
           var review = reviews[index];
-          return Container( // 한 번 넘기면 하나의 리뷰만 나오도록 수정할 예정
-            width: MediaQuery.sizeOf(context).width * 0.9,
-            child: Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(review[0], style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text(review[1]),
-                  ],
-                ),
+          return Card(
+            color: Colors.lightGreen[100],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    review[0],
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    review[1],
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
+            ),
           );
         },
       ),

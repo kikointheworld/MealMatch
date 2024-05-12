@@ -53,25 +53,35 @@ class PanelWidget extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => ListView(
-    padding: EdgeInsets.zero,
-    controller: controller,
-    children: <Widget>[
-      SizedBox(height: 12),
-      buildDragHandle(),
-      SizedBox(height: 18),
-      Center(
-        child: Text("Nearby Restaurants", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 30),),
-      ),
-      //buildAboutText(),
-      buildRestaurantList(),
-      SizedBox(height: 24,),
-    ],
-  );
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        buildDragHandle(),
+        Expanded(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            controller: controller,
+            children: <Widget>[
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 4.0),
+                  child: Text("Nearby Restaurants", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 30)),
+                ),
+              ),
+              buildRestaurantList(),
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget buildDragHandle() => GestureDetector(
+    onTap: togglePanel,
     child: Center(
       child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 12),
         width: 30,
         height: 5,
         decoration: BoxDecoration(
@@ -80,7 +90,6 @@ class PanelWidget extends StatelessWidget {
         ),
       ),
     ),
-    onTap: togglePanel,
   );
 
   void togglePanel() => panelController.isPanelOpen
