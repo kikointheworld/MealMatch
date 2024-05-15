@@ -69,13 +69,13 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
                 target: NLatLng(start_latitude, start_longitude),
                 zoom: 15
               ),
-              indoorEnable: false, // 실내 맵 사용 가능 여부 설정 (?)
-              locationButtonEnable: false, // 위치 버튼 표시 여부 설정
-              consumeSymbolTapEvents: true, // 심볼 탭 이벤트 소비 여부 설정
+              indoorEnable: false,
+              locationButtonEnable: false,
+              consumeSymbolTapEvents: true,
               logoClickEnable: false,
             ),
-            onMapReady: (controller) async{ //지도 준비 완료 시 호출되는 콜백 함수
-              mapControllerCompleter.complete(controller); // Completer에 지도 컨트롤러 완료 신호 전송
+            onMapReady: (controller) async{
+              mapControllerCompleter.complete(controller);
             },
           ),
           Positioned(
@@ -85,10 +85,11 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
           ),
 
           SlidingUpPanel(
+            backdropEnabled: true,
+            backdropOpacity: 0.3,
             controller: panelController,
             maxHeight: panelHeightOpen,
             minHeight: panelHeightClosed,
-            //body: MapsWidget,
             parallaxEnabled: true,
             parallaxOffset: .5,
             panelBuilder: (controller) => PanelWidget(
