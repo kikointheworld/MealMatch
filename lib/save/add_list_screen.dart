@@ -4,31 +4,32 @@ import 'package:mealmatch/services/data_manager.dart';
 import 'package:provider/provider.dart';
 
 class AddListPage extends StatefulWidget {
-  final bool isEdit;
-  final BookmarkList? bookmarkList;
+  final BookmarkList? initialData; // 추가
+  final Function(BookmarkList)? onSave; // 추가
 
-  AddListPage({this.isEdit = false, this.bookmarkList});
+  const AddListPage({Key? key, this.initialData, this.onSave}) : super(key: key); // 수정
 
   @override
   _AddListPageState createState() => _AddListPageState();
 }
 
 class _AddListPageState extends State<AddListPage> {
-  final TextEditingController _listNameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _urlController = TextEditingController();
-  String _selectedColor = 'red'; // Default color
+  late TextEditingController _listNameController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _urlController;
+  late String _selectedColor;
   bool _isPublic = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.isEdit && widget.bookmarkList != null) {
-      _listNameController.text = widget.bookmarkList!.name;
-      _descriptionController.text = widget.bookmarkList!.description ?? '';
-      _selectedColor = widget.bookmarkList!.color;
-      _isPublic = widget.bookmarkList!.isPublic ?? false;
-    }
+
+    // 초기값 설정
+    _listNameController = TextEditingController(text: widget.initialData?.name ?? '');
+    _descriptionController = TextEditingController(text: widget.initialData?.description ?? '');
+    _urlController = TextEditingController();
+    _selectedColor = widget.initialData?.color ?? 'red';
+    _isPublic = false;
   }
 
   @override
@@ -43,7 +44,7 @@ class _AddListPageState extends State<AddListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isEdit ? 'Edit List' : 'Add List'),
+        title: Text(widget.initialData == null ? 'Add List' : 'Edit List'), // 제목 변경
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
@@ -70,19 +71,7 @@ class _AddListPageState extends State<AddListPage> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: List.generate(11, (index) {
-                    List<String> colors = [
-                      'red',
-                      'orange',
-                      'yellow',
-                      'green',
-                      'lime',
-                      'blue',
-                      'cyan',
-                      'pink',
-                      'pink2',
-                      'purple',
-                      'indigo'
-                    ];
+                    List<String> colors = ['red', 'orange', 'yellow', 'green', 'lime', 'blue', 'cyan', 'pink', 'pink2', 'purple', 'indigo'];
                     return GestureDetector(
                       onTap: () {
                         setState(() {
@@ -92,11 +81,8 @@ class _AddListPageState extends State<AddListPage> {
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 5),
                         child: CircleAvatar(
-                          backgroundColor:
-                          _selectedColor == colors[index]
-                              ? Colors.grey[700]
-                              : _getColor(colors[index]),
-                          radius: 18, // 크기 조정
+                          backgroundColor: _selectedColor == colors[index] ? Colors.grey : _getColor(colors[index]),
+                          radius: 17, // 크기 조정
                           child: CircleAvatar(
                             backgroundColor: _getColor(colors[index]),
                             radius: 15, // 크기 조정
@@ -172,12 +158,10 @@ class _AddListPageState extends State<AddListPage> {
                 description: _descriptionController.text,
                 isPublic: _isPublic,
               );
-              if (widget.isEdit && widget.bookmarkList != null) {
-                Provider.of<DataManager>(context, listen: false)
-                    .updateBookmarkList(widget.bookmarkList!, newList);
+              if (widget.onSave != null) {
+                widget.onSave!(newList); // onSave 콜백 호출
               } else {
-                Provider.of<DataManager>(context, listen: false)
-                    .addBookmarkList(newList);
+                Provider.of<DataManager>(context, listen: false).addBookmarkList(newList);
               }
               Navigator.of(context).pop();
             }

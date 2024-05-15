@@ -67,7 +67,7 @@ class _SavedPageState extends State<SavedPage> {
               icon: Icons.restaurant_menu,
               iconColor: _getColor(bookmarkList.color),
               onTap: () {},
-              onMenuTapListener: () => _showDeleteConfirmationDialog(context, bookmarkList),
+              onEdit: () => _editBookmarkList(context, bookmarkList), // Change this line
               onDelete: () => _showDeleteConfirmationDialog(context, bookmarkList), // Add this line
             );
           }).toList(),
@@ -130,6 +130,20 @@ class _SavedPageState extends State<SavedPage> {
           ],
         );
       },
+    );
+  }
+
+  void _editBookmarkList(BuildContext context, BookmarkList bookmarkList) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddListPage(
+          initialData: bookmarkList,
+          onSave: (updatedList) {
+            Provider.of<DataManager>(context, listen: false).updateBookmarkList(bookmarkList, updatedList);
+          },
+        ),
+      ),
     );
   }
 }

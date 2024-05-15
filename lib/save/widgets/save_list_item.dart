@@ -4,7 +4,7 @@ class SaveListItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-  final VoidCallback? onMenuTapListener;
+  final VoidCallback? onEdit; // Change this line
   final VoidCallback onTap;
   final VoidCallback onDelete; // Add this line
   final Color iconColor;
@@ -14,7 +14,7 @@ class SaveListItem extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    this.onMenuTapListener,
+    this.onEdit, // Change this line
     required this.onTap,
     required this.onDelete, // Add this line
     required this.iconColor,
@@ -30,30 +30,27 @@ class SaveListItem extends StatelessWidget {
             leading: Icon(icon, size: 30, color: iconColor),
             title: Text(title),
             subtitle: Text(subtitle),
-            trailing: GestureDetector(
-              onTap: onMenuTapListener,
-              child: PopupMenuButton<String>(
-                onSelected: (value) {
-                  if (value == 'edit') {
-                    onMenuTapListener?.call();
-                  } else if (value == 'delete') {
-                    onDelete();
-                  }
-                },
-                itemBuilder: (BuildContext context) {
-                  return [
-                    PopupMenuItem(
-                      value: 'edit',
-                      child: Text('Edit'),
-                    ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Text('Delete'),
-                    ),
-                  ];
-                },
-                child: const Icon(Icons.more_vert, size: 28),
-              ),
+            trailing: PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'edit') {
+                  onEdit?.call(); // Change this line
+                } else if (value == 'delete') {
+                  onDelete();
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Text('Edit'),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Text('Delete'),
+                  ),
+                ];
+              },
+              child: const Icon(Icons.more_vert, size: 28),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
           ),
