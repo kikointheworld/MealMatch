@@ -3,7 +3,8 @@ import 'package:mealmatch/global/widgets/search_widget.dart';
 import 'package:mealmatch/save/widgets/save_list_item.dart';
 import 'package:provider/provider.dart';
 import 'package:mealmatch/services/data_manager.dart';
-import 'package:mealmatch/save/add_list_screen.dart'; // 새로운 페이지 import
+import 'package:mealmatch/save/add_list_screen.dart';
+import 'package:mealmatch/models/bookmark_list.dart';
 
 class SavedPage extends StatefulWidget {
   const SavedPage({super.key});
@@ -23,7 +24,6 @@ class _SavedPageState extends State<SavedPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Accessing DataManager instance
     final dataManager = Provider.of<DataManager>(context);
 
     return SingleChildScrollView(
@@ -38,8 +38,8 @@ class _SavedPageState extends State<SavedPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Your Lists",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                const Text("Your Lists", style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.w700)),
                 InkWell(
                   onTap: () {
                     Navigator.push(
@@ -51,14 +51,12 @@ class _SavedPageState extends State<SavedPage> {
                     children: [
                       Icon(Icons.add, size: 22, color: Colors.blue[800]),
                       const SizedBox(width: 10),
-                      Text("New list",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.blue[800])),
+                      Text("New list", style: TextStyle(fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.blue[800])),
                     ],
                   ),
-                ),
+                )
               ],
             ),
           ),
@@ -69,21 +67,8 @@ class _SavedPageState extends State<SavedPage> {
               icon: Icons.restaurant_menu,
               iconColor: _getColor(bookmarkList.color),
               onTap: () {},
-              onMenuTapListener: () {},
-              onEdit: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddListPage(
-                      isEdit: true,
-                      bookmarkList: bookmarkList,
-                    ),
-                  ),
-                );
-              },
-              onDelete: () {
-                dataManager.removeBookmarkList(bookmarkList);
-              },
+              onMenuTapListener: () => _showDeleteConfirmationDialog(context, bookmarkList),
+              onDelete: () => _showDeleteConfirmationDialog(context, bookmarkList), // Add this line
             );
           }).toList(),
           const SizedBox(height: 10),
@@ -119,5 +104,32 @@ class _SavedPageState extends State<SavedPage> {
       default:
         return Colors.grey;
     }
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, BookmarkList bookmarkList) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Delete"),
+          content: Text("Deleting a list will also remove the saved places in it."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Provider.of<DataManager>(context, listen: false).removeBookmarkList(bookmarkList);
+                Navigator.of(context).pop(); // Close the dialog after deletion
+              },
+              child: Text("Delete", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

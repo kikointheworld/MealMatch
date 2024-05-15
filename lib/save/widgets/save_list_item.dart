@@ -6,9 +6,8 @@ class SaveListItem extends StatelessWidget {
   final String subtitle;
   final VoidCallback? onMenuTapListener;
   final VoidCallback onTap;
+  final VoidCallback onDelete; // Add this line
   final Color iconColor;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
 
   const SaveListItem({
     super.key,
@@ -17,9 +16,8 @@ class SaveListItem extends StatelessWidget {
     required this.subtitle,
     this.onMenuTapListener,
     required this.onTap,
+    required this.onDelete, // Add this line
     required this.iconColor,
-    required this.onEdit,
-    required this.onDelete,
   });
 
   @override
@@ -29,29 +27,33 @@ class SaveListItem extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            leading: Icon(
-              icon,
-              size: 30,
-              color: iconColor,
-            ),
+            leading: Icon(icon, size: 30, color: iconColor),
             title: Text(title),
             subtitle: Text(subtitle),
-            trailing: PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'Edit') {
-                  onEdit();
-                } else if (value == 'Delete') {
-                  onDelete();
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return {'Edit', 'Delete'}.map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
-              },
+            trailing: GestureDetector(
+              onTap: onMenuTapListener,
+              child: PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    onMenuTapListener?.call();
+                  } else if (value == 'delete') {
+                    onDelete();
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Text('Edit'),
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Text('Delete'),
+                    ),
+                  ];
+                },
+                child: const Icon(Icons.more_vert, size: 28),
+              ),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
           ),
@@ -59,7 +61,7 @@ class SaveListItem extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Divider(color: Colors.grey),
-          ),
+          )
         ],
       ),
     );

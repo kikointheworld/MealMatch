@@ -51,8 +51,7 @@ class DataManager with ChangeNotifier {
     if (user != null) {
       String userId = user.uid;
       await _dbRef.child('users').child(userId).child('bookmarkLists').push().set(bookmarkList.toJson());
-      bookmarkLists.add(bookmarkList);
-      // notifyListeners();
+      _loadBookmarkLists(user); // Ensure the list is reloaded after adding
     }
   }
 
@@ -71,10 +70,7 @@ class DataManager with ChangeNotifier {
           if (value['name'] == oldList.name && value['color'] == oldList.color) {
             // Update the list in the database
             await userListsRef.child(key).update(newList.toJson());
-            // Update the list in the local list
-            int index = bookmarkLists.indexOf(oldList);
-            bookmarkLists[index] = newList;
-            notifyListeners();
+            _loadBookmarkLists(user); // Ensure the list is reloaded after updating
           }
         });
       }
@@ -96,9 +92,7 @@ class DataManager with ChangeNotifier {
           if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
             // Remove the list from the database
             await userListsRef.child(key).remove();
-            // Remove the list from the local list
-            bookmarkLists.remove(bookmarkList);
-            notifyListeners();
+            _loadBookmarkLists(user); // Ensure the list is reloaded after removing
           }
         });
       }
@@ -118,9 +112,12 @@ class DataManager with ChangeNotifier {
             name: value['name'],
             color: value['color'],
             description: value['description'],
-            isPublic: value["isPublic"]
+            isPublic: value['isPublic'],
           );
         }).toList();
+        notifyListeners();
+      } else {
+        bookmarkLists = []; // Clear the list if there are no data
         notifyListeners();
       }
     });
