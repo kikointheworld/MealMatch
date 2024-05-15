@@ -82,7 +82,7 @@ class _MyPageState extends State<MyPage> {
               // ),
               ListTile(
                 title: Text(dataManager.restaurants.isNotEmpty
-                    ? dataManager.restaurants[0]?.name ?? 'No Restaurant'
+                    ? dataManager.restaurants[0]?.enName ?? 'No Restaurant'
                     : 'No Restaurant'),
                 trailing: Icon(Icons.arrow_forward_ios),
                 onTap: () {

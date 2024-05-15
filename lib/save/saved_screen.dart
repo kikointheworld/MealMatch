@@ -58,8 +58,8 @@ class _SavedPageState extends State<SavedPage> {
               final restaurant = dataManager.restaurants[index];
               if (restaurant != null) { // Check if restaurant is not null
                 return SaveListItem(
-                  title: restaurant.name, // Safe to access name
-                  subtitle: "Located at ${restaurant.address}",
+                  title: restaurant.enName, // Safe to access name
+                  subtitle: "Located at ${restaurant.enAddress}",
                   icon: Icons.restaurant_menu,
                   iconColor: Colors.deepOrangeAccent,
                   onTap: () {},
