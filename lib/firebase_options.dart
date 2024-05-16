@@ -45,6 +45,7 @@ class DefaultFirebaseOptions {
     authDomain: 'mealmatch-632dd.firebaseapp.com',
     storageBucket: 'mealmatch-632dd.appspot.com',
     measurementId: 'G-0P9ET33QQP',
+    databaseURL: "https://mealmatch-632dd-default-rtdb.asia-southeast1.firebasedatabase.app",
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -53,6 +54,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '374587675989',
     projectId: 'mealmatch-632dd',
     storageBucket: 'mealmatch-632dd.appspot.com',
+    databaseURL: "https://mealmatch-632dd-default-rtdb.asia-southeast1.firebasedatabase.app",
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -64,6 +66,7 @@ class DefaultFirebaseOptions {
     iosClientId:
         '374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75.apps.googleusercontent.com',
     iosBundleId: 'com.example.mealmatch',
+    databaseURL: "https://mealmatch-632dd-default-rtdb.asia-southeast1.firebasedatabase.app",
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -75,6 +78,7 @@ class DefaultFirebaseOptions {
     iosClientId:
         '374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75.apps.googleusercontent.com',
     iosBundleId: 'com.example.mealmatch',
+    databaseURL: "https://mealmatch-632dd-default-rtdb.asia-southeast1.firebasedatabase.app",
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
@@ -85,5 +89,6 @@ class DefaultFirebaseOptions {
     authDomain: 'mealmatch-632dd.firebaseapp.com',
     storageBucket: 'mealmatch-632dd.appspot.com',
     measurementId: 'G-8W6SS9YF0D',
+    databaseURL: "https://mealmatch-632dd-default-rtdb.asia-southeast1.firebasedatabase.app",
   );
 }

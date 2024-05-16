@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:mealmatch/screen/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mealmatch/services/data_manager.dart';
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-<<<<<<< HEAD
-=======
   await NaverMapSdk.instance.initialize(
       clientId: 'nyzcf5qljz',
       onAuthFailed: (ex) {
@@ -26,10 +26,14 @@ void main() async {
       });
 
   WidgetsFlutterBinding.ensureInitialized();
->>>>>>> dev_my
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // DataManager 인스턴스 가져오기 및 초기화
+  DataManager dataManager = DataManager();
+  dataManager.initialize();
+
   runApp(const MyApp());
 }
 
@@ -39,10 +43,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const LoginSignUpScreen(),
+    return ChangeNotifierProvider<DataManager>(
+      create: (context) => DataManager(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const LoginSignUpScreen(),  // Assuming this is your initial screen
+      ),
     );
   }
 }
