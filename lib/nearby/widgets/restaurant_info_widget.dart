@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../../models/review.dart';
-
-//import 'package:mealmatch/models/review.dart';
+import 'package:flutter/material.dart';
+import 'package:mealmatch/models/review.dart';
 
 class RestaurantInfoWidget extends StatelessWidget {
   final String name;
@@ -24,97 +22,59 @@ class RestaurantInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        CarouselSlider(
-          options: CarouselOptions(
-            aspectRatio: 16/9,
-            enlargeCenterPage: true,
-            autoPlay: true,
-          ),
-          items: mainImages?.map((item) => Image.network(item, fit: BoxFit.cover)).toList(),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: <Widget>[
-              Text(
-                name,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (mainImages != null && mainImages!.isNotEmpty)
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 200,
+                  enableInfiniteScroll: true,
+                  autoPlay: true,
+                ),
+                items: mainImages!.map((imageUrl) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                      );
+                    },
+                  );
+                }).toList(),
               ),
-              const SizedBox(width: 8,),
-              Text(
-                category,
-                textAlign: TextAlign.right
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.favorite_border),
-                onPressed: () {
-                  // Favorite logic
-                },
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(
-            address,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text( // 들어갈 내용인지는 애매함.
-            openingHours,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        const SizedBox(height: 8.0),
-        buildHorizontalReviewList(reviews),
-        const SizedBox(height: 20.0,),
-      ],
-    );
-  }
-
-  Widget buildHorizontalReviewList(List<dynamic> reviews) {
-    PageController controller = PageController(viewportFraction: 0.95);
-
-    return Container(
-      height: 120,
-      child: PageView.builder(
-        controller: controller,
-        itemCount: reviews.length,
-        itemBuilder: (context, index) {
-          var review = reviews[index];
-          return Card(
-            color: Colors.lightGreen[100],
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    //review[0],
-                    review.koUsername,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    //review[1],
-                    review.enContent,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+            const SizedBox(height: 10),
+            Text(
+              name,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          );
-        },
+            Text(category, style: TextStyle(fontSize: 16)),
+            Text(address, style: TextStyle(fontSize: 16)),
+            Text('Opening Hours: $openingHours', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 10),
+            Text(
+              'Reviews:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            ...reviews.map((review) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('English: ${review.enUsername} - ${review.enContent}'),
+                    Text('Korean: ${review.koUsername} - ${review.koContent}'),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
       ),
     );
   }

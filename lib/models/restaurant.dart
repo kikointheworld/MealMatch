@@ -10,6 +10,7 @@ class Restaurant {
   final String koAddress;
   final String koCategory;
   final String koOpeningHours;
+  final List<String>? mainImages;
   final double latitude;
   final double longitude;
   final List<Menu> menus;
@@ -25,6 +26,7 @@ class Restaurant {
     required this.koAddress,
     required this.koCategory,
     required this.koOpeningHours,
+    this.mainImages,
     required this.latitude,
     required this.longitude,
     required this.menus,
@@ -42,6 +44,7 @@ class Restaurant {
       koAddress: json["address"]["koAddress"],
       koCategory: json["category"]["koCategory"],
       koOpeningHours: json["opening_hours"]["ko"],
+        mainImages: json["main_images"] != null ? List<String>.from(json["main_images"]) : null,
       latitude: json["address"]["lat"],
       longitude: json["address"]["lng"],
       menus: json['menus'] != null ? (json['menus'] as List).map((x) =>
