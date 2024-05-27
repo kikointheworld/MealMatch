@@ -114,8 +114,8 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
           NaverMap(
             options: const NaverMapViewOptions(
               initialCameraPosition: NCameraPosition(
-                target: NLatLng(start_latitude, start_longitude),
-                zoom: 15
+                  target: NLatLng(start_latitude, start_longitude),
+                  zoom: 15
               ),
               indoorEnable: false,
               locationButtonEnable: true,
@@ -169,16 +169,16 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
                   Future.delayed(Duration.zero, () {
                     if(focusNode.hasFocus){
                       Navigator.of(context).push(
-                        PageRouteBuilder(
+                          PageRouteBuilder(
                             pageBuilder: (context, animation, secondaryAnimation) => const SearchPage(),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            );
-                          },
-                          transitionDuration: const Duration(milliseconds: 100),
-                        )
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              );
+                            },
+                            transitionDuration: const Duration(milliseconds: 100),
+                          )
                       );
                     }
                   },);
