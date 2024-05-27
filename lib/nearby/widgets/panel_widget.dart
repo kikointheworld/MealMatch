@@ -41,7 +41,7 @@ class PanelWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              buildRestaurantList(dataManager),
+              buildRestaurantList(),
               const SizedBox(height: 24),
             ],
           ),
