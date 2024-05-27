@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../../models/review.dart';
 
+//import 'package:mealmatch/models/review.dart';
+
 class RestaurantInfoWidget extends StatelessWidget {
   final String name;
   final String category;

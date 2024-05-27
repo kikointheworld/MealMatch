@@ -2,6 +2,7 @@
   "project_info": {
     "project_number": "374587675989",
     "project_id": "mealmatch-632dd",
+    "firebase_url": "https://mealmatch-632dd-default-rtdb.asia-southeast1.firebasedatabase.app",
     "storage_bucket": "mealmatch-632dd.appspot.com"
   },
   "client": [

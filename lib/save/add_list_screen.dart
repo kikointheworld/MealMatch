@@ -47,6 +47,7 @@ class _AddListPageState extends State<AddListPage> {
         title: Text(widget.initialData == null ? 'Add List' : 'Edit List'), // 제목 변경
         leading: IconButton(
           icon: const Icon(Icons.close),
+
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -97,6 +98,7 @@ class _AddListPageState extends State<AddListPage> {
               const Text('Sharing options'),
               ListTile(
                 title: const Text('Public'),
+
                 leading: Radio<bool>(
                   value: true,
                   groupValue: _isPublic,
@@ -109,6 +111,7 @@ class _AddListPageState extends State<AddListPage> {
               ),
               ListTile(
                 title: const Text('Private'),
+
                 leading: Radio<bool>(
                   value: false,
                   groupValue: _isPublic,
@@ -123,6 +126,7 @@ class _AddListPageState extends State<AddListPage> {
               TextField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
+
                   labelText: 'Enter a note.',
                   counterText: '0/30',
                 ),
@@ -132,6 +136,7 @@ class _AddListPageState extends State<AddListPage> {
               TextField(
                 controller: _urlController,
                 decoration: const InputDecoration(
+
                   labelText: 'Add a URL.',
                 ),
               ),
@@ -170,6 +175,7 @@ class _AddListPageState extends State<AddListPage> {
             }
           },
           child: const Text('Done', style: TextStyle(fontSize: 18)),
+
         ),
       ),
     );

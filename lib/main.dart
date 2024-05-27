@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:mealmatch/screen/main_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mealmatch/services/data_manager.dart';
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NaverMapSdk.instance.initialize(
-    clientId: 'nyzcf5qljz',
-    onAuthFailed: (ex){
-      print("****네이버맵 인증오류: $ex ****");
-      /*
+      clientId: 'nyzcf5qljz',
+      onAuthFailed: (ex) {
+        print("****네이버맵 인증오류: $ex ****");
+        /*
       * 401
       * 잘못된 클라이언트 ID 지정
       * 잘못된 클라이언트 유형 사용
@@ -21,17 +23,17 @@ void main() async {
       * 800
       * 클라이언트 ID 미지정
       * */
-    }
-  );
+      });
+
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyBeXxcAvrpKW0n-DuF9ZLqetiIYerVpdKw",
-        appId: "1:374587675989:android:642745c65a185ccc50cbdc",
-        messagingSenderId: "374587675989",
-        projectId: "mealmatch-632dd",
-        storageBucket: "mealmatch-632dd.appspot.com",
-      )
+    options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // DataManager 인스턴스 가져오기 및 초기화
+  DataManager dataManager = DataManager();
+  dataManager.initialize();
+
   runApp(const MyApp());
 }
 
@@ -41,11 +43,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const LoginSignUpScreen(),
+    return ChangeNotifierProvider<DataManager>(
+      create: (context) => DataManager(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const LoginSignUpScreen(),  // Assuming this is your initial screen
+      ),
     );
   }
 }
-

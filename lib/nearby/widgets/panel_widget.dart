@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-//import 'restaurant_info_widget.dart';
+
 import 'package:mealmatch/services/data_manager.dart';
 import '../../models/restaurant.dart';
 import 'restaurant_info_widget.dart';
+
 
 class PanelWidget extends StatelessWidget {
   final ScrollController controller;
@@ -40,7 +41,7 @@ class PanelWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              buildRestaurantList(),
+              buildRestaurantList(dataManager),
               const SizedBox(height: 24),
             ],
           ),
@@ -100,3 +101,4 @@ class PanelWidget extends StatelessWidget {
     );
   }
 }
+
