@@ -7,8 +7,11 @@ import 'package:mealmatch/nearby/widgets/nearby_places_widget.dart';
 import 'package:mealmatch/screen/widgets/track_location_button.dart';
 import 'package:mealmatch/utils/utils.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../global/widgets/search_widget.dart';
+import '../models/restaurant.dart';
+import '../services/data_manager.dart';
 
 class NearbyPage extends StatefulWidget {
   final int currentIndex;
@@ -22,6 +25,7 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
   final TextEditingController _searchController = TextEditingController();
   final Completer<NaverMapController> mapControllerCompleter = Completer();
   final panelController = PanelController();
+  Timer? _debounceTimer;
 
   FocusScopeNode focusNode = FocusScopeNode();
   static const start_latitude = 37.2939;
@@ -31,8 +35,10 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
   double longitude = 126.9756;
   double _slidingPosition = 0;
   double _buttonOpactity = 1.0;
+  bool _showButton = false;
+  List<Restaurant> _restaurantsInRange = [];
 
-  NCameraPosition? lastCameraPosition; //마지막 카메라 위치를 저장할 변수
+  //NCameraPosition? lastCameraPosition; //마지막 카메라 위치를 저장할 변수
 
   @override
   bool get wantKeepAlive => true;
@@ -43,15 +49,57 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
     if(permission == LocationPermission.whileInUse || permission == LocationPermission.always){
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       NaverMapController controller = await mapControllerCompleter.future;
-      //controller.getLocationOverlay();
-      //controller.setLocationTrackingMode(NLocationTrackingMode.follow);
     }
+  }
+
+  void _addMarker(double lat, double lon, String name) async {
+    NaverMapController controller = await mapControllerCompleter.future;
+    final marker = NMarker(
+      position: NLatLng(lat, lon),
+      id: name,
+    );
+    controller.addOverlay(marker);
+  }
+
+  Future<void> _fetchRestaurants() async {
+    NaverMapController controller = await mapControllerCompleter.future;
+    NLatLngBounds bounds = await controller.getContentBounds();
+    final dataManager = Provider.of<DataManager>(context, listen: false);
+    List<Restaurant?> restaurantsInRange = dataManager.restaurants.where((restaurant) {
+      if (restaurant == null) return false;
+      return (restaurant.latitude >= bounds.southWest.latitude &&
+          restaurant.latitude <= bounds.northEast.latitude &&
+          restaurant.longitude >= bounds.southWest.longitude &&
+          restaurant.longitude <= bounds.northEast.longitude);
+    }).toList();
+
+    controller.clearOverlays();
+    _restaurantsInRange = restaurantsInRange.whereType<Restaurant>().toList();
+
+    for (var restaurant in restaurantsInRange) {
+      if (restaurant != null) {
+        _addMarker(restaurant.latitude, restaurant.longitude, restaurant.koName);
+      }
+    }
+  }
+
+  void _onCameraChanged(){
+    if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
+    setState(() {
+      _showButton = true;
+    });
+    _debounceTimer = Timer(const Duration(seconds: 3), () {
+      setState(() {
+        _showButton = false;
+      });
+    });
   }
 
   @override
   void initState() {
     _setCurrentLocation();
     super.initState();
+    Provider.of<DataManager>(context, listen: false).initialize();
   }
 
   @override
@@ -70,19 +118,23 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
                 zoom: 15
               ),
               indoorEnable: false,
-              locationButtonEnable: false,
+              locationButtonEnable: true,
               consumeSymbolTapEvents: true,
               logoClickEnable: false,
             ),
             onMapReady: (controller) async{
               mapControllerCompleter.complete(controller);
+              await _fetchRestaurants();
+            },
+            onCameraChange: (reason, animated) async{
+              _onCameraChanged();
             },
           ),
-          Positioned(
+          /*Positioned(
             bottom: MediaQuery.of(context).size.height * 0.06,
             right: 8,
             child: TrackLocationButton(onTap: () {}),
-          ),
+          ),*/
 
           SlidingUpPanel(
             backdropEnabled: true,
@@ -95,6 +147,7 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
             panelBuilder: (controller) => PanelWidget(
               controller: controller,
               panelController: panelController,
+              restaurants: _restaurantsInRange,
             ),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
           ),
@@ -138,6 +191,24 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
               ),
 
               //ChangeMapTypeButton(onTap: () {})
+              if (_showButton)
+                Center(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      await _fetchRestaurants();
+                    },
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('현 지도에서 검색'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.green,
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
 

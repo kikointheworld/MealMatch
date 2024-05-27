@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import '../../models/review.dart';
 
 class RestaurantInfoWidget extends StatelessWidget {
   final String name;
   final String category;
   final String address;
   final String openingHours;
-  final List<String> mainImages;
-  final List<dynamic> reviews;
+  final List<String>? mainImages;
+  final List<Review> reviews;
 
   const RestaurantInfoWidget({
     Key? key,
@@ -15,7 +16,7 @@ class RestaurantInfoWidget extends StatelessWidget {
     required this.category,
     required this.address,
     required this.openingHours,
-    required this.mainImages,
+    this.mainImages,
     required this.reviews,
   }) : super(key: key);
 
@@ -30,15 +31,21 @@ class RestaurantInfoWidget extends StatelessWidget {
             enlargeCenterPage: true,
             autoPlay: true,
           ),
-          items: mainImages.map((item) => Image.network(item, fit: BoxFit.cover)).toList(),
+          items: mainImages?.map((item) => Image.network(item, fit: BoxFit.cover)).toList(),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             children: <Widget>[
-              Text(name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+              Text(
+                name,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(width: 8,),
-              Text(category, textAlign: TextAlign.right),
+              Text(
+                category,
+                textAlign: TextAlign.right
+              ),
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.favorite_border),
@@ -51,11 +58,18 @@ class RestaurantInfoWidget extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(address, overflow: TextOverflow.ellipsis,),
+          child: Text(
+            address,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(openingHours), // 들어갈 내용인지는 애매함.
+          child: Text( // 들어갈 내용인지는 애매함.
+            openingHours,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         const SizedBox(height: 8.0),
         buildHorizontalReviewList(reviews),
@@ -82,13 +96,15 @@ class RestaurantInfoWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    review[0],
+                    //review[0],
+                    review.koUsername,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    review[1],
+                    //review[1],
+                    review.enContent,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
