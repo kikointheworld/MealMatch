@@ -73,7 +73,7 @@ class PanelWidget extends StatelessWidget {
             category: restaurant.enCategory,
             address: restaurant.enAddress,
             openingHours: restaurant.enOpeningHours,
-            mainImages: null, // Remove mainImages for now
+            mainImages: restaurant.mainImages,
             reviews: restaurant.reviews,
           );
         } else {

@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:mealmatch/models/review.dart';
 
@@ -21,62 +22,60 @@ class RestaurantInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          name,
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 4),
-        Text(
-          category,
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        SizedBox(height: 4),
-        Text(
-          address,
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        SizedBox(height: 4),
-        Text(
-          'Opening Hours: $openingHours',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        SizedBox(height: 8),
-        if (mainImages != null && mainImages!.isNotEmpty)
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: mainImages!.length,
-              itemBuilder: (context, index) {
-                return Image.network(mainImages![index]);
-              },
-            ),
-          ),
-        SizedBox(height: 8),
-        Column(
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: reviews.map((review) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  review.enUsername,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          children: [
+            if (mainImages != null && mainImages!.isNotEmpty)
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 200,
+                  enableInfiniteScroll: true,
+                  autoPlay: true,
                 ),
-                SizedBox(height: 4),
-                Text(
-                  review.enContent,
-                  style: TextStyle(fontSize: 16, color: Colors.black),
+                items: mainImages!.map((imageUrl) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width,
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+            const SizedBox(height: 10),
+            Text(
+              name,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(category, style: TextStyle(fontSize: 16)),
+            Text(address, style: TextStyle(fontSize: 16)),
+            Text('Opening Hours: $openingHours', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 10),
+            Text(
+              'Reviews:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            ...reviews.map((review) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('English: ${review.enUsername} - ${review.enContent}'),
+                    Text('Korean: ${review.koUsername} - ${review.koContent}'),
+                  ],
                 ),
-                SizedBox(height: 8),
-              ],
-            );
-          }).toList(),
+              );
+            }).toList(),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
