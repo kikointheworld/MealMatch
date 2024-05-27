@@ -46,7 +46,8 @@ class _AddListPageState extends State<AddListPage> {
       appBar: AppBar(
         title: Text(widget.initialData == null ? 'Add List' : 'Edit List'), // 제목 변경
         leading: IconButton(
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
+
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -58,14 +59,14 @@ class _AddListPageState extends State<AddListPage> {
             children: [
               TextField(
                 controller: _listNameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Enter a list name.',
                   counterText: '0/20',
                 ),
                 maxLength: 20,
               ),
-              SizedBox(height: 20),
-              Text('Select color'),
+              const SizedBox(height: 20),
+              const Text('Select color'),
               Container(
                 height: 60,
                 child: ListView(
@@ -79,7 +80,7 @@ class _AddListPageState extends State<AddListPage> {
                         });
                       },
                       child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5),
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
                         child: CircleAvatar(
                           backgroundColor: _selectedColor == colors[index] ? Colors.grey : _getColor(colors[index]),
                           radius: 17, // 크기 조정
@@ -93,10 +94,11 @@ class _AddListPageState extends State<AddListPage> {
                   }),
                 ),
               ),
-              SizedBox(height: 20),
-              Text('Sharing options'),
+              const SizedBox(height: 20),
+              const Text('Sharing options'),
               ListTile(
-                title: Text('Public'),
+                title: const Text('Public'),
+
                 leading: Radio<bool>(
                   value: true,
                   groupValue: _isPublic,
@@ -108,7 +110,8 @@ class _AddListPageState extends State<AddListPage> {
                 ),
               ),
               ListTile(
-                title: Text('Private'),
+                title: const Text('Private'),
+
                 leading: Radio<bool>(
                   value: false,
                   groupValue: _isPublic,
@@ -119,19 +122,21 @@ class _AddListPageState extends State<AddListPage> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _descriptionController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
+
                   labelText: 'Enter a note.',
                   counterText: '0/30',
                 ),
                 maxLength: 30,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _urlController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
+
                   labelText: 'Add a URL.',
                 ),
               ),
@@ -148,7 +153,7 @@ class _AddListPageState extends State<AddListPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            minimumSize: Size(double.infinity, 50), // 버튼의 크기 조정
+            minimumSize: const Size(double.infinity, 50), // 버튼의 크기 조정
           ),
           onPressed: () {
             if (_listNameController.text.isNotEmpty) {
@@ -165,8 +170,12 @@ class _AddListPageState extends State<AddListPage> {
               }
               Navigator.of(context).pop();
             }
+            else{
+              // List name 입력해야 한다는 toast 띄우기
+            }
           },
-          child: Text('Done', style: TextStyle(fontSize: 18)),
+          child: const Text('Done', style: TextStyle(fontSize: 18)),
+
         ),
       ),
     );

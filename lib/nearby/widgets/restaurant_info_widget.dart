@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mealmatch/models/review.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import '../../models/review.dart';
+
+//import 'package:mealmatch/models/review.dart';
 
 class RestaurantInfoWidget extends StatelessWidget {
   final String name;
@@ -24,59 +27,95 @@ class RestaurantInfoWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          name,
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 4),
-        Text(
-          category,
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        SizedBox(height: 4),
-        Text(
-          address,
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        SizedBox(height: 4),
-        Text(
-          'Opening Hours: $openingHours',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        SizedBox(height: 8),
-        if (mainImages != null && mainImages!.isNotEmpty)
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: mainImages!.length,
-              itemBuilder: (context, index) {
-                return Image.network(mainImages![index]);
-              },
-            ),
+        CarouselSlider(
+          options: CarouselOptions(
+            aspectRatio: 16/9,
+            enlargeCenterPage: true,
+            autoPlay: true,
           ),
-        SizedBox(height: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: reviews.map((review) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  review.enUsername,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  review.enContent,
-                  style: TextStyle(fontSize: 16, color: Colors.black),
-                ),
-                SizedBox(height: 8),
-              ],
-            );
-          }).toList(),
+          items: mainImages?.map((item) => Image.network(item, fit: BoxFit.cover)).toList(),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: <Widget>[
+              Text(
+                name,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(width: 8,),
+              Text(
+                category,
+                textAlign: TextAlign.right
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.favorite_border),
+                onPressed: () {
+                  // Favorite logic
+                },
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Text(
+            address,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Text( // 들어갈 내용인지는 애매함.
+            openingHours,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        buildHorizontalReviewList(reviews),
+        const SizedBox(height: 20.0,),
       ],
+    );
+  }
+
+  Widget buildHorizontalReviewList(List<dynamic> reviews) {
+    PageController controller = PageController(viewportFraction: 0.95);
+
+    return Container(
+      height: 120,
+      child: PageView.builder(
+        controller: controller,
+        itemCount: reviews.length,
+        itemBuilder: (context, index) {
+          var review = reviews[index];
+          return Card(
+            color: Colors.lightGreen[100],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    //review[0],
+                    review.koUsername,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    //review[1],
+                    review.enContent,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
