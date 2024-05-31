@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:mealmatch/global/restaurant_detail_screen.dart';
 import 'package:mealmatch/nearby/widgets/panel_widget.dart';
 import 'package:mealmatch/search/search_screen.dart';
 import 'package:mealmatch/nearby/widgets/nearby_places_widget.dart';
@@ -52,12 +53,20 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
     }
   }
 
-  void _addMarker(double lat, double lon, String name) async {
+  void _addMarker(double lat, double lon, Restaurant restaurant) async {
     NaverMapController controller = await mapControllerCompleter.future;
     final marker = NMarker(
       position: NLatLng(lat, lon),
-      id: name,
+      //id: name,
+      id: restaurant.koName,
     );
+    marker.setOnTapListener((overlay) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => RestaurantDetailPage(restaurant: restaurant),)
+        );
+    });
     controller.addOverlay(marker);
   }
 
@@ -78,7 +87,7 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
 
     for (var restaurant in restaurantsInRange) {
       if (restaurant != null) {
-        _addMarker(restaurant.latitude, restaurant.longitude, restaurant.koName);
+        _addMarker(restaurant.latitude, restaurant.longitude, restaurant);
       }
     }
   }
