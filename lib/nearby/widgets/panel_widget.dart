@@ -6,7 +6,6 @@ import 'package:mealmatch/services/data_manager.dart';
 import '../../models/restaurant.dart';
 import 'restaurant_info_widget.dart';
 
-
 class PanelWidget extends StatelessWidget {
   final ScrollController controller;
   final PanelController panelController;
@@ -16,14 +15,11 @@ class PanelWidget extends StatelessWidget {
     Key? key,
     required this.controller,
     required this.panelController,
-    //required this.restaurants,
     this.restaurants = const [], // 빈 리스트로 초기화
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    //final dataManager = Provider.of<DataManager>(context);
-
     return Column(
       children: <Widget>[
         buildDragHandle(),
@@ -87,15 +83,9 @@ class PanelWidget extends StatelessWidget {
       children: List.generate(itemCount, (index) {
         final restaurant = restaurants[index];
         return RestaurantInfoWidget(
-          name: restaurant.koName,
-          category: restaurant.koCategory,
-          address: restaurant.koAddress,
-          openingHours: restaurant.enOpeningHours,
-          mainImages: restaurant.mainImages,
-          reviews: restaurant.reviews,
+          restaurant: restaurant, // Restaurant 객체를 직접 전달
         );
       }),
     );
   }
 }
-

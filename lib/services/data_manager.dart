@@ -29,7 +29,6 @@ class DataManager with ChangeNotifier {
     ref.onValue.listen((event) {
       var snapshot = event.snapshot;
       if (snapshot.exists && snapshot.value != null) {
-        // Check if snapshot.value is a list before assigning it
         if (snapshot.value is List<dynamic>) {
           List<dynamic> dataList = snapshot.value as List<dynamic>;
           restaurants = dataList.map((x) {
@@ -37,7 +36,7 @@ class DataManager with ChangeNotifier {
               return Restaurant.fromJson(Map<String, dynamic>.from(x));
             }
             return null;
-          }).where((x) => x != null).toList(); // Filter out nulls if any casting fails
+          }).where((x) => x != null).toList();
           notifyListeners();
         } else {
           print('Data is not in the expected format (List<dynamic>)');
@@ -61,14 +60,12 @@ class DataManager with ChangeNotifier {
       String userId = user.uid;
       DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
 
-      // Find the key of the old list
       DatabaseEvent event = await userListsRef.once();
       DataSnapshot snapshot = event.snapshot;
       if (snapshot.exists) {
         Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
         data.forEach((key, value) async {
           if (value['name'] == oldList.name && value['color'] == oldList.color) {
-            // Update the list in the database
             await userListsRef.child(key).update(newList.toJson());
             _loadBookmarkLists(user); // Ensure the list is reloaded after updating
           }
@@ -83,14 +80,12 @@ class DataManager with ChangeNotifier {
       String userId = user.uid;
       DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
 
-      // Find the key of the list to delete
       DatabaseEvent event = await userListsRef.once();
       DataSnapshot snapshot = event.snapshot;
       if (snapshot.exists) {
         Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
         data.forEach((key, value) async {
           if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
-            // Remove the list from the database
             await userListsRef.child(key).remove();
             _loadBookmarkLists(user); // Ensure the list is reloaded after removing
           }
@@ -113,6 +108,9 @@ class DataManager with ChangeNotifier {
             color: value['color'],
             description: value['description'],
             isPublic: value['isPublic'],
+            restaurants: value['restaurants'] != null
+                ? (value['restaurants'] as Map<dynamic, dynamic>).values.map((item) => Restaurant.fromJson(Map<String, dynamic>.from(item as Map))).toList()
+                : [],
           );
         }).toList();
         notifyListeners();
@@ -121,5 +119,56 @@ class DataManager with ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  void addRestaurantToBookmarkList(Restaurant restaurant, BookmarkList bookmarkList) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      String userId = user.uid;
+      DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
+
+      DatabaseEvent event = await userListsRef.once();
+      DataSnapshot snapshot = event.snapshot;
+      if (snapshot.exists) {
+        Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
+        data.forEach((key, value) async {
+          if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
+            await userListsRef.child(key).child('restaurants').push().set(restaurant.toJson());
+            bookmarkList.restaurants.add(restaurant);
+            notifyListeners();
+          }
+        });
+      }
+    }
+  }
+
+  void removeRestaurantFromBookmarkList(Restaurant restaurant, BookmarkList bookmarkList) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      String userId = user.uid;
+      DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
+
+      DatabaseEvent event = await userListsRef.once();
+      DataSnapshot snapshot = event.snapshot;
+      if (snapshot.exists) {
+        Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
+        data.forEach((key, value) async {
+          if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
+            final restaurantsRef = userListsRef.child(key).child('restaurants');
+            final restaurantsSnapshot = await restaurantsRef.once();
+            if (restaurantsSnapshot.snapshot.exists) {
+              Map<dynamic, dynamic> restaurantsData = restaurantsSnapshot.snapshot.value as Map<dynamic, dynamic>;
+              restaurantsData.forEach((restaurantKey, restaurantValue) async {
+                if (Restaurant.fromJson(Map<String, dynamic>.from(restaurantValue as Map)).enName == restaurant.enName) {
+                  await restaurantsRef.child(restaurantKey).remove();
+                  bookmarkList.restaurants.removeWhere((r) => r.enName == restaurant.enName);
+                  notifyListeners();
+                }
+              });
+            }
+          }
+        });
+      }
+    }
   }
 }
