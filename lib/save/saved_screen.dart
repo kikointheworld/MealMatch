@@ -27,6 +27,10 @@ class _SavedPageState extends State<SavedPage> {
   Widget build(BuildContext context) {
     final dataManager = Provider.of<DataManager>(context);
 
+    // 디폴트 북마크 리스트를 분리
+    final defaultBookmarkList = dataManager.bookmarkLists.firstWhere((list) => list.name == 'My Place');
+    final otherBookmarkLists = dataManager.bookmarkLists.where((list) => list.name != 'My Place').toList();
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -50,19 +54,36 @@ class _SavedPageState extends State<SavedPage> {
                   },
                   child: Row(
                     children: [
-                      Icon(Icons.add, size: 22, color: Colors.blue[800]),
+                      Icon(Icons.add, size: 22, color: Colors.green),
                       const SizedBox(width: 10),
-                      Text("New list", style: TextStyle(fontSize: 16,
+                      const Text("New list", style: TextStyle(fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: Colors.blue[800])),
+                          color: Colors.green)),
                     ],
                   ),
                 )
               ],
             ),
           ),
-          // Display Bookmark Lists
-          ...dataManager.bookmarkLists.map((bookmarkList) {
+          // Display Default Bookmark List
+          SaveListItem(
+            title: defaultBookmarkList.name,
+            subtitle: defaultBookmarkList.description ?? '',
+            icon: Icons.bookmark,
+            iconColor: _getColor(defaultBookmarkList.color),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BookmarkDetailPage(bookmarkList: defaultBookmarkList),
+                ),
+              );
+            },
+            onEdit: null,
+            onDelete: null,
+          ),
+          // Display Other Bookmark Lists
+          ...otherBookmarkLists.map((bookmarkList) {
             return SaveListItem(
               title: bookmarkList.name,
               subtitle: bookmarkList.description ?? '',
@@ -79,26 +100,6 @@ class _SavedPageState extends State<SavedPage> {
               onEdit: () => _editBookmarkList(context, bookmarkList),
               onDelete: () => _showDeleteConfirmationDialog(context, bookmarkList),
             );
-          }).toList(),
-          const Divider(),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
-            child: Text("Restaurants", style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.w700)),
-          ),
-          // Display Restaurants
-          ...dataManager.restaurants.map((restaurant) {
-            if (restaurant != null) {
-              return SaveListItem(
-                title: restaurant.enName,
-                subtitle: restaurant.enAddress,
-                icon: Icons.restaurant,
-                iconColor: Colors.deepOrange,
-                onTap: () {},
-                // Restaurants don't need edit or delete actions
-              );
-            }
-            return SizedBox.shrink();
           }).toList(),
           const SizedBox(height: 10),
         ],
