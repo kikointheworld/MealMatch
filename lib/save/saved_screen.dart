@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mealmatch/global/widgets/search_widget.dart';
 import 'package:mealmatch/save/widgets/save_list_item.dart';
 import 'package:mealmatch/save/widgets/saved_detail_screen.dart';
 import 'package:provider/provider.dart';
@@ -15,14 +14,6 @@ class SavedPage extends StatefulWidget {
 }
 
 class _SavedPageState extends State<SavedPage> {
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final dataManager = Provider.of<DataManager>(context);
@@ -31,77 +22,94 @@ class _SavedPageState extends State<SavedPage> {
     final defaultBookmarkList = dataManager.bookmarkLists.firstWhere((list) => list.name == 'My Place');
     final otherBookmarkLists = dataManager.bookmarkLists.where((list) => list.name != 'My Place').toList();
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SearchWidget(
-            controller: _searchController,
-            isOutlined: true,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'Your Lists',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
+        ),
+      ),
+      body: Column(
+        children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddListPage()),
+                  );
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add, size: 28, color: Colors.green),
+                    const SizedBox(width: 5),
+                    const Text(
+                      "New list",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
               children: [
-                const Text("Your Lists", style: TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.w700)),
-                InkWell(
+                // Display Default Bookmark List
+                SaveListItem(
+                  title: defaultBookmarkList.name,
+                  subtitle: defaultBookmarkList.description ?? '',
+                  icon: Icons.bookmark,
+                  iconColor: _getColor(defaultBookmarkList.color),
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => AddListPage()),
+                      MaterialPageRoute(
+                        builder: (context) => BookmarkDetailPage(bookmarkList: defaultBookmarkList),
+                      ),
                     );
                   },
-                  child: Row(
-                    children: [
-                      Icon(Icons.add, size: 22, color: Colors.green),
-                      const SizedBox(width: 10),
-                      const Text("New list", style: TextStyle(fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.green)),
-                    ],
-                  ),
-                )
+                  onEdit: null,
+                  onDelete: null,
+                ),
+                // Display Other Bookmark Lists
+                ...otherBookmarkLists.map((bookmarkList) {
+                  return SaveListItem(
+                    title: bookmarkList.name,
+                    subtitle: bookmarkList.description ?? '',
+                    icon: Icons.bookmark,
+                    iconColor: _getColor(bookmarkList.color),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookmarkDetailPage(bookmarkList: bookmarkList),
+                        ),
+                      );
+                    },
+                    onEdit: () => _editBookmarkList(context, bookmarkList),
+                    onDelete: () => _showDeleteConfirmationDialog(context, bookmarkList),
+                  );
+                }).toList(),
               ],
             ),
           ),
-          // Display Default Bookmark List
-          SaveListItem(
-            title: defaultBookmarkList.name,
-            subtitle: defaultBookmarkList.description ?? '',
-            icon: Icons.bookmark,
-            iconColor: _getColor(defaultBookmarkList.color),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BookmarkDetailPage(bookmarkList: defaultBookmarkList),
-                ),
-              );
-            },
-            onEdit: null,
-            onDelete: null,
-          ),
-          // Display Other Bookmark Lists
-          ...otherBookmarkLists.map((bookmarkList) {
-            return SaveListItem(
-              title: bookmarkList.name,
-              subtitle: bookmarkList.description ?? '',
-              icon: Icons.bookmark,
-              iconColor: _getColor(bookmarkList.color),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BookmarkDetailPage(bookmarkList: bookmarkList),
-                  ),
-                );
-              },
-              onEdit: () => _editBookmarkList(context, bookmarkList),
-              onDelete: () => _showDeleteConfirmationDialog(context, bookmarkList),
-            );
-          }).toList(),
-          const SizedBox(height: 10),
         ],
       ),
     );

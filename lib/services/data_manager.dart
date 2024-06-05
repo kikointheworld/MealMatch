@@ -44,6 +44,27 @@ class DataManager with ChangeNotifier {
     });
   }
 
+  Future<List<Restaurant>> searchRestaurants(String query) async {
+    DatabaseReference ref = _dbRef.child('restaurants');
+    DataSnapshot snapshot = await ref.get();
+    List<Restaurant> searchResults = [];
+
+    if (snapshot.exists && snapshot.value != null) {
+      List<dynamic> dataList = snapshot.value as List<dynamic>;
+      searchResults = dataList.map((x) {
+        if (x is Map<dynamic, dynamic>) {
+          Restaurant restaurant = Restaurant.fromJson(Map<String, dynamic>.from(x));
+          if (restaurant.enName.toLowerCase().contains(query.toLowerCase())) {
+            return restaurant;
+          }
+        }
+        return null;
+      }).where((x) => x != null).toList().cast<Restaurant>();
+    }
+
+    return searchResults;
+  }
+
   void _initializeUser(User user) async {
     String userId = user.uid;
     DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mealmatch/config/palette.dart';
 
 class SearchWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -51,16 +50,16 @@ class SearchWidget extends StatelessWidget {
             boxShadow: isOutlined == true
                 ? []
                 : [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(.4),
-                      blurRadius: 5.0,
-                      spreadRadius: 0.5,
-                      offset: const Offset(
-                        0.0,
-                        0.0,
-                      ),
-                    ),
-                  ]),
+              BoxShadow(
+                color: Colors.grey.withOpacity(.4),
+                blurRadius: 5.0,
+                spreadRadius: 0.5,
+                offset: const Offset(
+                  0.0,
+                  0.0,
+                ),
+              ),
+            ]),
         child: TextFormField(
           autofocus: autoFocus ?? false,
           readOnly: readOnly ?? false,
@@ -85,38 +84,38 @@ class SearchWidget extends StatelessWidget {
               border: InputBorder.none,
               prefixIcon: isOnSearchPage == true
                   ? GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 25,
-                      ))
+                  onTap: () => Navigator.pop(context),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    size: 25,
+                  ))
                   : Padding(
-                      padding: const EdgeInsets.only(top: 2.0),
-                      child: Wrap(
-                        children: [
-                          SizedBox(
-                              width: 35,
-                              height: 35,
-                              child: Image.asset(
-                                "image/human.jpeg",
-                                fit: BoxFit.cover,
-                              )),
-                        ],
-                      ),
-                    ),
+                padding: const EdgeInsets.only(top: 2.0),
+                child: Wrap(
+                  children: [
+                    SizedBox(
+                        width: 35,
+                        height: 35,
+                        child: Image.asset(
+                          "image/human.jpeg",
+                          fit: BoxFit.cover,
+                        )),
+                  ],
+                ),
+              ),
               suffixIcon: Padding(
                   padding: EdgeInsets.zero,
                   child: isShowCancel == true
                       ? GestureDetector(
-                          onTap: onCancelTap,
-                          child: const Icon(
-                            Icons.close,
-                            size: 30,
-                          ))
+                      onTap: onCancelTap,
+                      child: const Icon(
+                        Icons.close,
+                        size: 30,
+                      ))
                       : const Icon(
-                          Icons.keyboard_voice,
-                          size: 30,
-                        ))),
+                    Icons.keyboard_voice,
+                    size: 30,
+                  ))),
         ),
       ),
     );
