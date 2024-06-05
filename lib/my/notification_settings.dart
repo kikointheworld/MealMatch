@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   @override
@@ -7,8 +9,36 @@ class NotificationSettingsPage extends StatefulWidget {
 }
 
 class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
-  bool _isNotificationEnabled =
-      false; // Default value for the notification switch
+  bool _isNotificationEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNotificationSetting();
+  }
+
+  Future<void> _fetchNotificationSetting() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DatabaseReference userRef =
+          FirebaseDatabase.instance.ref().child('users').child(user.uid);
+      DataSnapshot snapshot = await userRef.child('notification').get();
+      if (snapshot.exists) {
+        setState(() {
+          _isNotificationEnabled = snapshot.value as bool;
+        });
+      }
+    }
+  }
+
+  void _updateNotificationSetting(bool newValue) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DatabaseReference userRef =
+          FirebaseDatabase.instance.ref().child('users').child(user.uid);
+      await userRef.update({'notification': newValue});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +63,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 setState(() {
                   _isNotificationEnabled = newValue;
                 });
+                _updateNotificationSetting(newValue);
               },
             ),
           ],
