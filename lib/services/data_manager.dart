@@ -19,6 +19,7 @@ class DataManager with ChangeNotifier {
 
   List<Restaurant?> restaurants = [];
   List<BookmarkList> bookmarkLists = [];
+  List<Restaurant> targetRestaurants = [];  // 타겟 식당 목록
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
@@ -35,13 +36,37 @@ class DataManager with ChangeNotifier {
               return Restaurant.fromJson(Map<String, dynamic>.from(x));
             }
             return null;
-          }).where((x) => x != null).toList();
+          }).toList();
+          _setTargetRestaurants();
           notifyListeners();
         } else {
           print('Data is not in the expected format (List<dynamic>)');
         }
       }
     });
+  }
+
+  void _setTargetRestaurants() {
+    targetRestaurants = restaurants
+        .where((restaurant) => restaurant != null) // Null 필터링
+        .map((restaurant) => restaurant!) // Null이 아님을 확신
+        .where((restaurant) {
+      // 특정 조건을 만족하는 식당을 타겟 식당으로 설정
+      return restaurant.classifications.values.any((value) => value == true);
+    }).toList();
+  }
+
+  List<Restaurant> filterRestaurants(Map<String, bool> filters) {
+    return targetRestaurants.where((restaurant) {
+      // 필터링 조건 적용
+      bool include = true;
+      filters.forEach((key, value) {
+        if (value && !(restaurant.classifications[key] ?? false)) {
+          include = false;
+        }
+      });
+      return include;
+    }).toList();
   }
 
   Future<List<Restaurant>> searchRestaurants(String query) async {
@@ -232,56 +257,4 @@ class DataManager with ChangeNotifier {
       }
     }
   }
-
-
-// void addRestaurantToBookmarkList(Restaurant restaurant, BookmarkList bookmarkList) async {
-  //   User? user = _auth.currentUser;
-  //   if (user != null) {
-  //     String userId = user.uid;
-  //     DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
-  //
-  //     DatabaseEvent event = await userListsRef.once();
-  //     DataSnapshot snapshot = event.snapshot;
-  //     if (snapshot.exists) {
-  //       Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-  //       data.forEach((key, value) async {
-  //         if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
-  //           await userListsRef.child(key).child('restaurants').push().set(restaurant.toJson());
-  //           bookmarkList.restaurants.add(restaurant);
-  //           notifyListeners();
-  //         }
-  //       });
-  //     }
-  //   }
-  // }
-  //
-  // void removeRestaurantFromBookmarkList(Restaurant restaurant, BookmarkList bookmarkList) async {
-  //   User? user = _auth.currentUser;
-  //   if (user != null) {
-  //     String userId = user.uid;
-  //     DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
-  //
-  //     DatabaseEvent event = await userListsRef.once();
-  //     DataSnapshot snapshot = event.snapshot;
-  //     if (snapshot.exists) {
-  //       Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-  //       data.forEach((key, value) async {
-  //         if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
-  //           final restaurantsRef = userListsRef.child(key).child('restaurants');
-  //           final restaurantsSnapshot = await restaurantsRef.once();
-  //           if (restaurantsSnapshot.snapshot.exists) {
-  //             Map<dynamic, dynamic> restaurantsData = restaurantsSnapshot.snapshot.value as Map<dynamic, dynamic>;
-  //             restaurantsData.forEach((restaurantKey, restaurantValue) async {
-  //               if (Restaurant.fromJson(Map<String, dynamic>.from(restaurantValue)).enName == restaurant.enName) {
-  //                 await restaurantsRef.child(restaurantKey).remove();
-  //                 bookmarkList.restaurants.removeWhere((r) => r.enName == restaurant.enName);
-  //                 notifyListeners();
-  //               }
-  //             });
-  //           }
-  //         }
-  //       });
-  //     }
-  //   }
-  // }
 }
