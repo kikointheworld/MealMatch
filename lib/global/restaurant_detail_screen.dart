@@ -69,7 +69,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         ),
                       ),
                     ),
-                    Expanded(
+                    /*Expanded(
                       flex: 1,
                       child: Column(
                         children: widget.restaurant.mainImages!
@@ -87,7 +87,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                             )
                             .toList(),
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
                 Padding(
@@ -239,31 +239,46 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        children: reviews.map((review) {
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    review.koUsername,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    review.enContent,
-                    style: const TextStyle(fontSize: 13, color: Colors.black),
-                  ),
-                ],
-              ),
+        children: [
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                // 리뷰 쓰기 버튼 클릭 시 로직 추가
+              },
+              child: const Text("Write a Review"),
             ),
-          );
-        }).toList(),
+          ),
+          const SizedBox(height: 16),
+          ...reviews.map((review) {
+            return SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Card(
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        review.koUsername,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        review.enContent,
+                        style: const TextStyle(fontSize: 13, color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }
+
 
   Widget buildMenuContent() {
     return Padding(
