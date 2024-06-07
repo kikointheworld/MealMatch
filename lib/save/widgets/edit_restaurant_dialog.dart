@@ -62,7 +62,7 @@ class _EditRestaurantDialogState extends State<EditRestaurantDialog> {
           onPressed: () {
             _saveBookmarkChanges(dataManager);
             Navigator.of(context).pop();
-            widget.onSave();
+            widget.onSave(); // onSave 콜백 호출
           },
           child: Text('Save'),
         ),
@@ -71,7 +71,6 @@ class _EditRestaurantDialogState extends State<EditRestaurantDialog> {
   }
 
   void _saveBookmarkChanges(DataManager dataManager) {
-    final List<String> listsToRemove = [];
     checkedLists.forEach((listName, isChecked) {
       final bookmarkList = dataManager.bookmarkLists.firstWhere((list) => list.name == listName);
       if (isChecked) {
@@ -81,14 +80,8 @@ class _EditRestaurantDialogState extends State<EditRestaurantDialog> {
       } else {
         if (bookmarkList.restaurants.any((r) => r.enName == widget.restaurant.enName)) {
           dataManager.removeRestaurantFromBookmarkList(widget.restaurant, bookmarkList);
-          listsToRemove.add(listName);
         }
       }
-    });
-    // Remove restaurants from UI state
-    listsToRemove.forEach((listName) {
-      final bookmarkList = dataManager.bookmarkLists.firstWhere((list) => list.name == listName);
-      bookmarkList.restaurants.removeWhere((r) => r.enName == widget.restaurant.enName);
     });
   }
 }

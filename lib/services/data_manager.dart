@@ -196,7 +196,7 @@ class DataManager with ChangeNotifier {
           if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
             await userListsRef.child(key).child('restaurants').push().set(restaurant.toJson());
             bookmarkList.restaurants.add(restaurant);
-            notifyListeners();
+            notifyListeners(); // 추가된 식당에 대해 UI 갱신
           }
         });
       }
@@ -223,7 +223,7 @@ class DataManager with ChangeNotifier {
                 if (Restaurant.fromJson(Map<String, dynamic>.from(restaurantValue)).enName == restaurant.enName) {
                   await restaurantsRef.child(restaurantKey).remove();
                   bookmarkList.restaurants.removeWhere((r) => r.enName == restaurant.enName);
-                  notifyListeners();
+                  notifyListeners(); // 삭제된 식당에 대해 UI 갱신
                 }
               });
             }
@@ -232,4 +232,56 @@ class DataManager with ChangeNotifier {
       }
     }
   }
+
+
+// void addRestaurantToBookmarkList(Restaurant restaurant, BookmarkList bookmarkList) async {
+  //   User? user = _auth.currentUser;
+  //   if (user != null) {
+  //     String userId = user.uid;
+  //     DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
+  //
+  //     DatabaseEvent event = await userListsRef.once();
+  //     DataSnapshot snapshot = event.snapshot;
+  //     if (snapshot.exists) {
+  //       Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
+  //       data.forEach((key, value) async {
+  //         if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
+  //           await userListsRef.child(key).child('restaurants').push().set(restaurant.toJson());
+  //           bookmarkList.restaurants.add(restaurant);
+  //           notifyListeners();
+  //         }
+  //       });
+  //     }
+  //   }
+  // }
+  //
+  // void removeRestaurantFromBookmarkList(Restaurant restaurant, BookmarkList bookmarkList) async {
+  //   User? user = _auth.currentUser;
+  //   if (user != null) {
+  //     String userId = user.uid;
+  //     DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
+  //
+  //     DatabaseEvent event = await userListsRef.once();
+  //     DataSnapshot snapshot = event.snapshot;
+  //     if (snapshot.exists) {
+  //       Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
+  //       data.forEach((key, value) async {
+  //         if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
+  //           final restaurantsRef = userListsRef.child(key).child('restaurants');
+  //           final restaurantsSnapshot = await restaurantsRef.once();
+  //           if (restaurantsSnapshot.snapshot.exists) {
+  //             Map<dynamic, dynamic> restaurantsData = restaurantsSnapshot.snapshot.value as Map<dynamic, dynamic>;
+  //             restaurantsData.forEach((restaurantKey, restaurantValue) async {
+  //               if (Restaurant.fromJson(Map<String, dynamic>.from(restaurantValue)).enName == restaurant.enName) {
+  //                 await restaurantsRef.child(restaurantKey).remove();
+  //                 bookmarkList.restaurants.removeWhere((r) => r.enName == restaurant.enName);
+  //                 notifyListeners();
+  //               }
+  //             });
+  //           }
+  //         }
+  //       });
+  //     }
+  //   }
+  // }
 }

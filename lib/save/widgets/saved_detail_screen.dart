@@ -22,6 +22,8 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dataManager = Provider.of<DataManager>(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -152,7 +154,7 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
           },
         );
       },
-    );
+    ).then((_) => setState(() {})); // 다이얼로그가 닫힌 후에 상태 업데이트
   }
 
   void _showDeleteConfirmationDialog(BuildContext context, Restaurant restaurant) {
@@ -172,10 +174,9 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
             TextButton(
               onPressed: () {
                 final dataManager = Provider.of<DataManager>(context, listen: false);
-                final bookmarkList = dataManager.bookmarkLists.firstWhere((list) => list.restaurants.contains(restaurant));
-                dataManager.removeRestaurantFromBookmarkList(restaurant, bookmarkList);
+                dataManager.removeRestaurantFromBookmarkList(restaurant, widget.bookmarkList);
                 setState(() {
-                  widget.bookmarkList.restaurants.remove(restaurant); // 리스트에서 식당 제거
+                  widget.bookmarkList.restaurants.removeWhere((r) => r.enName == restaurant.enName);
                 });
                 Navigator.of(context).pop();
               },

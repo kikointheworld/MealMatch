@@ -30,8 +30,8 @@ class SaveListItem extends StatelessWidget {
         children: [
           ListTile(
             leading: Icon(icon, size: 30, color: iconColor),
-            title: Text(title),
-            subtitle: Text(subtitle),
+            title: Text(title, overflow: TextOverflow.ellipsis,),
+            subtitle: Text(subtitle, overflow: TextOverflow.ellipsis,),
             trailing: GestureDetector(
               onTap: onMenuTapListener,
               child: PopupMenuButton<String>(
