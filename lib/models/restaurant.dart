@@ -16,6 +16,7 @@ class Restaurant {
   final List<Menu> menus;
   final List<Review> reviews;
   final String? tel;
+  final String? mainOpeningHours;
 
   Restaurant({
     required this.enName,
@@ -32,6 +33,7 @@ class Restaurant {
     required this.menus,
     required this.reviews,
     this.tel,
+    this.mainOpeningHours,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -50,6 +52,7 @@ class Restaurant {
       menus: json['menus'] != null ? (json['menus'] as List).map((x) => Menu.fromJson(x as Map<dynamic, dynamic>)).toList() : [],
       reviews: json['reviews'] != null ? (json['reviews'] as List).map((x) => Review.fromJson(x as Map<dynamic, dynamic>)).toList() : [],
       tel: json.containsKey("tel") ? json["tel"] : null,
+      mainOpeningHours: json["opening_hours"].containsKey("main") ? json["opening_hours"]["main"] : null,
     );
   }
 
@@ -72,6 +75,7 @@ class Restaurant {
       "opening_hours": {
         "en": enOpeningHours,
         "ko": koOpeningHours,
+        "main": mainOpeningHours,
       },
       "main_images": mainImages,
       "menus": menus.map((menu) => menu.toJson()).toList(),
