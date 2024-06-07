@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mealmatch/my/dietary_preferences.dart';
 import 'package:mealmatch/my/edit_profile_info.dart';
 import 'package:mealmatch/my/manage_reviews.dart';
@@ -16,6 +17,30 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  String _userName = "Tamer";
+  String _userEmail = "tamer@gmail.com";
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DatabaseReference userRef =
+          FirebaseDatabase.instance.ref().child('users').child(user.uid);
+      DataSnapshot snapshot = await userRef.get();
+      if (snapshot.exists) {
+        setState(() {
+          _userName = snapshot.child('name').value as String;
+          _userEmail = snapshot.child('email').value as String;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -65,11 +90,10 @@ class _MyPageState extends State<MyPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('Tamer',
+                          Text(_userName,
                               style: TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.bold)),
-                          Text('I\'m not vegan',
-                              style: TextStyle(fontSize: 16)),
+                          Text(_userEmail, style: TextStyle(fontSize: 16)),
                         ],
                       ),
                     ),
@@ -82,8 +106,8 @@ class _MyPageState extends State<MyPage> {
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => EditProfileInfoPage(
-                      initialUserName: "Tamer",
-                      initialEmail: "tamer@gmail.com",
+                      initialUserName: _userName,
+                      initialEmail: _userEmail,
                     ),
                   ));
                 },

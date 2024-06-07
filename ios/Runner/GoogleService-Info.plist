@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75.apps.googleusercontent.com</string>
+	<string>374587675989-6s7lj7f06slnkk79em1p8c0o90dle0pg.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.374587675989-3g5s9jhqee22h37q27vp22c2bf21gu75</string>
+	<string>com.googleusercontent.apps.374587675989-6s7lj7f06slnkk79em1p8c0o90dle0pg</string>
 	<key>API_KEY</key>
 	<string>AIzaSyC31QSIzPBAhRj_W5IbG3UY0yhBnVYlfLQ</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.mealmatch</string>
+	<string>com.example.mealmatch.RunnerTests</string>
 	<key>PROJECT_ID</key>
 	<string>mealmatch-632dd</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:374587675989:ios:670f42de1b33f63f50cbdc</string>
+	<string>1:374587675989:ios:31327a96552c216950cbdc</string>
+	<key>DATABASE_URL</key>
+	<string>https://mealmatch-632dd-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>
 </plist>
