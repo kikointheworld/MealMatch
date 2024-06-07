@@ -5,15 +5,27 @@ class BookmarkList {
   final String color;
   final String? description;
   final bool isPublic;
-  final List<Restaurant>? restaurants;
+  final List<Restaurant> restaurants;
 
   BookmarkList({
     required this.name,
     required this.color,
     this.description,
-    required this.isPublic,
-    this.restaurants
+    this.isPublic = false,
+    this.restaurants = const [],
   });
+
+  factory BookmarkList.fromJson(Map<dynamic, dynamic> json) {
+    return BookmarkList(
+      name: json["name"],
+      color: json["color"],
+      description: json["description"],
+      isPublic: json["isPublic"],
+      restaurants: json["restaurants"] != null
+          ? (json["restaurants"] as List).map((x) => Restaurant.fromJson(x)).toList()
+          : [],
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -21,7 +33,7 @@ class BookmarkList {
       "color": color,
       "description": description,
       "isPublic": isPublic,
-      "restaurants" : restaurants
+      "restaurants": restaurants.map((restaurant) => restaurant.toJson()).toList(),
     };
   }
 }

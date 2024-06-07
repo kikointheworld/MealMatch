@@ -47,7 +47,6 @@ class _AddListPageState extends State<AddListPage> {
         title: Text(widget.initialData == null ? 'Add List' : 'Edit List'), // 제목 변경
         leading: IconButton(
           icon: const Icon(Icons.close),
-
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -71,8 +70,9 @@ class _AddListPageState extends State<AddListPage> {
                 height: 60,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  children: List.generate(11, (index) {
-                    List<String> colors = ['red', 'orange', 'yellow', 'green', 'lime', 'blue', 'cyan', 'pink', 'pink2', 'purple', 'indigo'];
+                  children: List.generate(10, (index) {
+                    // green 제외한 색상 목록
+                    List<String> colors = ['red', 'orange', 'yellow', 'lime', 'blue', 'cyan', 'pink', 'pink2', 'purple', 'indigo'];
                     return GestureDetector(
                       onTap: () {
                         setState(() {
@@ -98,7 +98,6 @@ class _AddListPageState extends State<AddListPage> {
               const Text('Sharing options'),
               ListTile(
                 title: const Text('Public'),
-
                 leading: Radio<bool>(
                   value: true,
                   groupValue: _isPublic,
@@ -111,7 +110,6 @@ class _AddListPageState extends State<AddListPage> {
               ),
               ListTile(
                 title: const Text('Private'),
-
                 leading: Radio<bool>(
                   value: false,
                   groupValue: _isPublic,
@@ -126,7 +124,6 @@ class _AddListPageState extends State<AddListPage> {
               TextField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
-
                   labelText: 'Enter a note.',
                   counterText: '0/30',
                 ),
@@ -136,7 +133,6 @@ class _AddListPageState extends State<AddListPage> {
               TextField(
                 controller: _urlController,
                 decoration: const InputDecoration(
-
                   labelText: 'Add a URL.',
                 ),
               ),
@@ -148,7 +144,7 @@ class _AddListPageState extends State<AddListPage> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue[800],
+            backgroundColor: Colors.green,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -169,13 +165,11 @@ class _AddListPageState extends State<AddListPage> {
                 Provider.of<DataManager>(context, listen: false).addBookmarkList(newList);
               }
               Navigator.of(context).pop();
-            }
-            else{
+            } else {
               // List name 입력해야 한다는 toast 띄우기
             }
           },
           child: const Text('Done', style: TextStyle(fontSize: 18)),
-
         ),
       ),
     );
@@ -189,8 +183,6 @@ class _AddListPageState extends State<AddListPage> {
         return Colors.orange;
       case 'yellow':
         return Colors.yellow;
-      case 'green':
-        return Colors.green;
       case 'lime':
         return Colors.limeAccent[700]!;
       case 'blue':

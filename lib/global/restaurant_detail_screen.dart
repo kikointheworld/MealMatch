@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import '../models/restaurant.dart';
 import '../models/review.dart';
+import 'package:provider/provider.dart';
+import '../services/data_manager.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   final Restaurant restaurant;
@@ -17,6 +18,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   final ScrollController _scrollController = ScrollController();
   double _appBarOpacity = 0.0;
   int _currentTabIndex = 0;
+  Map<String, bool> checkedLists = {};
+  bool isFavorite = false;
 
   @override
   void initState() {
@@ -29,6 +32,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         _appBarOpacity = newOpacity;
       });
     });
+
+    final dataManager = Provider.of<DataManager>(context, listen: false);
+    dataManager.bookmarkLists.forEach((bookmarkList) {
+      checkedLists[bookmarkList.name] =
+          bookmarkList.restaurants.any((r) => r.enName == widget.restaurant.enName);
+    });
+    isFavorite = checkedLists.values.any((checked) => checked);
   }
 
   void _scrollToSection(int index) {
@@ -39,6 +49,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dataManager = Provider.of<DataManager>(context);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -69,25 +81,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         ),
                       ),
                     ),
-                    /*Expanded(
-                      flex: 1,
-                      child: Column(
-                        children: widget.restaurant.mainImages!
-                            .skip(1)
-                            .map(
-                              (image) => Expanded(
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: Image.network(
-                                    image,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),*/
                   ],
                 ),
                 Padding(
@@ -110,10 +103,11 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.favorite_border),
-                        onPressed: () {
-                          // Favorite logic
-                        },
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.black,
+                        ),
+                        onPressed: () => _showBookmarkDialog(context, dataManager),
                       ),
                     ],
                   ),
@@ -146,6 +140,71 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     );
   }
 
+  void _showBookmarkDialog(BuildContext context, DataManager dataManager) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(widget.restaurant.enName),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...dataManager.bookmarkLists.map((bookmarkList) {
+                    return CheckboxListTile(
+                      title: Text(bookmarkList.name),
+                      value: checkedLists[bookmarkList.name] ?? false,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          checkedLists[bookmarkList.name] = value!;
+                          isFavorite = checkedLists.values.any((checked) => checked);
+                        });
+                      },
+                    );
+                  }).toList(),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _saveBookmarkChanges(dataManager);
+                Navigator.of(context).pop();
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _saveBookmarkChanges(DataManager dataManager) {
+    checkedLists.forEach((listName, isChecked) {
+      final bookmarkList = dataManager.bookmarkLists.firstWhere((list) => list.name == listName);
+      if (isChecked) {
+        if (!bookmarkList.restaurants.any((r) => r.enName == widget.restaurant.enName)) {
+          dataManager.addRestaurantToBookmarkList(widget.restaurant, bookmarkList);
+        }
+      } else {
+        if (bookmarkList.restaurants.any((r) => r.enName == widget.restaurant.enName)) {
+          dataManager.removeRestaurantFromBookmarkList(widget.restaurant, bookmarkList);
+        }
+      }
+    });
+    setState(() {
+      isFavorite = checkedLists.values.any((checked) => checked);
+    });
+  }
+
   Widget buildTabBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -163,8 +222,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color:
-              _currentTabIndex == index ? Colors.green[100] : Colors.transparent,
+          color: _currentTabIndex == index ? Colors.green[100] : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Center(child: Text(title)),
@@ -181,9 +239,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           Text(widget.restaurant.koAddress,
               style: const TextStyle(fontSize: 14)),
           const SizedBox(height: 4),
-          /*Text(widget.restaurant.enOpeningHours,
-              style: const TextStyle(fontSize: 14)),
-          SizedBox(height: 4),*/
           Text("${widget.restaurant.tel}",
               style: const TextStyle(fontSize: 14)),
           const SizedBox(height: 16),
@@ -278,7 +333,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       ),
     );
   }
-
 
   Widget buildMenuContent() {
     return Padding(
