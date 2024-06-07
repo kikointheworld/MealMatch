@@ -1,26 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mealmatch/config/palette.dart';
 import 'package:mealmatch/screen/home_screen.dart';
-
-class Login extends StatefulWidget {
-  const Login({super.key});
-
-  @override
-  State<Login> createState() => _LoginState();
-}
-
-class _LoginState extends State<Login> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
 
 class LoginSignUpScreen extends StatefulWidget {
   const LoginSignUpScreen({super.key});
@@ -32,20 +15,13 @@ class LoginSignUpScreen extends StatefulWidget {
 class _LoginSignUpScreenState extends State<LoginSignUpScreen>
     with SingleTickerProviderStateMixin {
   final _authentication = FirebaseAuth.instance;
+  final _databaseReference = FirebaseDatabase.instance.reference();
 
   bool isSignupScreen = true;
   final _formkey = GlobalKey<FormState>();
   String userName = '';
   String userEmail = '';
   String userPassword = '';
-
-  // 이사람 사진
-
-  // 성별
-  // 자기 소개하는 말
-  // notification setting
-  // dietary preference
-  // manage reviews
 
   // GOOGLE LOGIN IMPLEMENTATION
   void signInWithGoogle() async {
@@ -67,6 +43,9 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
       userName = value.user!.displayName!;
       userEmail = value.user!.email!;
       userPassword = "defaultPassword";
+
+      _saveUserInfoToDatabase(value.user!);
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
@@ -76,15 +55,20 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
       print(userName);
       print(userEmail);
       print(userPassword);
-      // print(value.user?.email); // user email
-      // print(value.user?.displayName); // user name
-      // print(value.user?.phoneNumber); // user phonenumber
-      // print(value.user?.photoURL); // user picture
     }).onError((error, stackTrace) {
       print("error $error"); // error show
     });
+  }
 
-
+  void _saveUserInfoToDatabase(User user) async {
+    DatabaseReference userRef =
+        _databaseReference.child('users').child(user.uid);
+    await userRef.set({
+      'username': userName,
+      'email': userEmail,
+      'diet': [0],
+      'notification': false,
+    });
   }
 
   void _tryValidation() {
@@ -100,7 +84,6 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    // fetchData();
   }
 
   @override
@@ -137,7 +120,6 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                     children: [
                       RichText(
                         text: TextSpan(
-                            // text: 'Welcome',
                             text: '',
                             style: TextStyle(
                                 letterSpacing: 1.0,
@@ -146,8 +128,6 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                             children: [
                               TextSpan(
                                   text: isSignupScreen ? ' ' : ' ',
-                                  // ? ' to MealMatch!'
-                                  // : ' back',
                                   style: TextStyle(
                                       letterSpacing: 1.0,
                                       fontSize: 25,
@@ -158,8 +138,6 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                       SizedBox(height: 5.0),
                       Text(
                         isSignupScreen ? "" : "",
-                        // ? "Signup to continue"
-                        // : "Signing to continue",
                         style: TextStyle(
                           letterSpacing: 1.0,
                           color: Palette.text,
@@ -511,6 +489,7 @@ class _LoginSignUpScreenState extends State<LoginSignUpScreen>
                               .createUserWithEmailAndPassword(
                                   email: userEmail, password: userPassword);
                           if (newUser.user != null) {
+                            _saveUserInfoToDatabase(newUser.user!);
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) {
