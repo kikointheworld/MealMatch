@@ -92,6 +92,7 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
     final dataManager = Provider.of<DataManager>(context, listen: false);
     _filteredRestaurants = dataManager.filterRestaurants(_filterStatus);
     _updateMarkers();
+    _updatePanel(); // 패널 업데이트
   }
 
   void _updateMarkers() async {
@@ -101,6 +102,10 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
     for (var restaurant in _filteredRestaurants) {
       _addMarker(restaurant.latitude, restaurant.longitude, restaurant);
     }
+  }
+
+  void _updatePanel() {
+    setState(() {}); // 패널의 상태를 갱신
   }
 
   void _onFilterChange(String filterName) {
@@ -168,7 +173,7 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
             panelBuilder: (controller) => PanelWidget(
               controller: controller,
               panelController: panelController,
-              restaurants: _filteredRestaurants,
+              restaurants: _filteredRestaurants, // 필터링된 식당 목록을 전달
             ),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
           ),
