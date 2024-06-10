@@ -19,7 +19,7 @@ class DataManager with ChangeNotifier {
 
   List<Restaurant?> restaurants = [];
   List<BookmarkList> bookmarkLists = [];
-  List<Restaurant> targetRestaurants = [];  // 타겟 식당 목록
+  List<Restaurant> targetRestaurants = [];
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
@@ -46,19 +46,18 @@ class DataManager with ChangeNotifier {
     });
   }
 
+
   void _setTargetRestaurants() {
     targetRestaurants = restaurants
-        .where((restaurant) => restaurant != null) // Null 필터링
-        .map((restaurant) => restaurant!) // Null이 아님을 확신
+        .where((restaurant) => restaurant != null)
+        .map((restaurant) => restaurant!)
         .where((restaurant) {
-      // 특정 조건을 만족하는 식당을 타겟 식당으로 설정
       return restaurant.classifications.values.any((value) => value == true);
     }).toList();
   }
 
   List<Restaurant> filterRestaurants(Map<String, bool> filters) {
     return targetRestaurants.where((restaurant) {
-      // 필터링 조건 적용
       bool include = true;
       filters.forEach((key, value) {
         if (value && !(restaurant.classifications[key] ?? false)) {
@@ -95,27 +94,21 @@ class DataManager with ChangeNotifier {
     DatabaseReference userRef = _dbRef.child('users').child(userId);
     DatabaseReference userListsRef = userRef.child('bookmarkLists');
 
-    // 사용자의 이름과 이메일을 저장
-    String userName =
-        user.displayName ?? "No Name"; // 사용자의 이름이 없을 경우 "No Name"으로 저장
-    String userEmail =
-        user.email ?? "No Email"; // 사용자의 이메일이 없을 경우 "No Email"으로 저장
+    String userName = user.displayName ?? "No Name";
+    String userEmail = user.email ?? "No Email";
 
-    // 사용자 데이터 업데이트
     await userRef.update({
       'name': userName,
       'email': userEmail,
     });
 
-    // 북마크 리스트 초기화
     DataSnapshot snapshot = await userListsRef.get();
     bool hasDefaultList = false;
 
     if (snapshot.exists) {
       Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
       if (data != null) {
-        hasDefaultList =
-            data.values.any((value) => value['name'] == 'My Place');
+        hasDefaultList = data.values.any((value) => value['name'] == 'My Place');
       }
     }
 
@@ -136,14 +129,9 @@ class DataManager with ChangeNotifier {
     if (user != null) {
       String userId = user.uid;
       if (bookmarkList.name == 'My Place') {
-        return; // 기본 리스트는 추가할 수 없음
+        return;
       }
-      await _dbRef
-          .child('users')
-          .child(userId)
-          .child('bookmarkLists')
-          .push()
-          .set(bookmarkList.toJson());
+      await _dbRef.child('users').child(userId).child('bookmarkLists').push().set(bookmarkList.toJson());
       _loadBookmarkLists(user);
     }
   }
@@ -153,18 +141,16 @@ class DataManager with ChangeNotifier {
     if (user != null) {
       String userId = user.uid;
       if (oldList.name == 'My Place') {
-        return; // 기본 리스트는 수정할 수 없음
+        return;
       }
-      DatabaseReference userListsRef =
-          _dbRef.child('users').child(userId).child('bookmarkLists');
+      DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
 
       DatabaseEvent event = await userListsRef.once();
       DataSnapshot snapshot = event.snapshot;
       if (snapshot.exists) {
         Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
         data.forEach((key, value) async {
-          if (value['name'] == oldList.name &&
-              value['color'] == oldList.color) {
+          if (value['name'] == oldList.name && value['color'] == oldList.color) {
             await userListsRef.child(key).update(newList.toJson());
             _loadBookmarkLists(user);
           }
@@ -178,18 +164,16 @@ class DataManager with ChangeNotifier {
     if (user != null) {
       String userId = user.uid;
       if (bookmarkList.name == 'My Place') {
-        return; // 기본 리스트는 삭제할 수 없음
+        return;
       }
-      DatabaseReference userListsRef =
-          _dbRef.child('users').child(userId).child('bookmarkLists');
+      DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
 
       DatabaseEvent event = await userListsRef.once();
       DataSnapshot snapshot = event.snapshot;
       if (snapshot.exists) {
         Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
         data.forEach((key, value) async {
-          if (value['name'] == bookmarkList.name &&
-              value['color'] == bookmarkList.color) {
+          if (value['name'] == bookmarkList.name && value['color'] == bookmarkList.color) {
             await userListsRef.child(key).remove();
             _loadBookmarkLists(user);
           }
@@ -200,8 +184,7 @@ class DataManager with ChangeNotifier {
 
   void _loadBookmarkLists(User user) async {
     String userId = user.uid;
-    DatabaseReference userListsRef =
-        _dbRef.child('users').child(userId).child('bookmarkLists');
+    DatabaseReference userListsRef = _dbRef.child('users').child(userId).child('bookmarkLists');
 
     userListsRef.onValue.listen((event) {
       final listsData = event.snapshot.value as Map<dynamic, dynamic>?;
@@ -214,18 +197,13 @@ class DataManager with ChangeNotifier {
             description: value['description'],
             isPublic: value['isPublic'],
             restaurants: value['restaurants'] != null
-                ? (value['restaurants'] as Map<dynamic, dynamic>)
-                    .values
-                    .map((item) {
-                      if (item is Map<dynamic, dynamic>) {
-                        return Restaurant.fromJson(
-                            Map<String, dynamic>.from(item));
-                      } else {
-                        return null;
-                      }
-                    })
-                    .whereType<Restaurant>()
-                    .toList()
+                ? (value['restaurants'] as Map<dynamic, dynamic>).values.map((item) {
+              if (item is Map<dynamic, dynamic>) {
+                return Restaurant.fromJson(Map<String, dynamic>.from(item));
+              } else {
+                return null;
+              }
+            }).whereType<Restaurant>().toList()
                 : [],
           );
         }).toList();
@@ -278,7 +256,7 @@ class DataManager with ChangeNotifier {
                 if (Restaurant.fromJson(Map<String, dynamic>.from(restaurantValue)).enName == restaurant.enName) {
                   await restaurantsRef.child(restaurantKey).remove();
                   bookmarkList.restaurants.removeWhere((r) => r.enName == restaurant.enName);
-                  notifyListeners(); // 삭제된 식당에 대해 UI 갱신
+                  notifyListeners();
                 }
               });
             }
