@@ -22,6 +22,8 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dataManager = Provider.of<DataManager>(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -36,7 +38,7 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
                 const SizedBox(height: 8),
                 Text(
                   widget.bookmarkList.name,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ],
             ),
@@ -63,26 +65,41 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          restaurant.enName,
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          restaurant.enCategory,
-                                          style: TextStyle(fontSize: 16, color: Colors.grey),
-                                        ),
-                                      ],
+                                    Text(
+                                      restaurant.enName,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      // 줄바꿈 가능하게 수정
+                                      maxLines: 2,
+                                      softWrap: true,
                                     ),
                                     const SizedBox(height: 4),
-                                    Text(restaurant.enAddress),
+                                    Text(
+                                      restaurant.enCategory,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      restaurant.enAddress,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -95,7 +112,7 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
                                   }
                                 },
                                 itemBuilder: (BuildContext context) {
-                                  return [
+                                  return const [
                                     PopupMenuItem(
                                       value: 'edit',
                                       child: Text('Edit'),
@@ -106,6 +123,7 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
                                     ),
                                   ];
                                 },
+                                child: const Icon(Icons.more_vert, size: 28),
                               ),
                             ],
                           ),
@@ -152,7 +170,7 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
           },
         );
       },
-    );
+    ).then((_) => setState(() {})); // 다이얼로그가 닫힌 후에 상태 업데이트
   }
 
   void _showDeleteConfirmationDialog(BuildContext context, Restaurant restaurant) {
@@ -160,26 +178,25 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Confirmation'),
-          content: Text('Are you sure you want to delete this restaurant from the list?'),
+          title: const Text('Delete Confirmation'),
+          content: const Text('Are you sure you want to delete this restaurant from the list?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 final dataManager = Provider.of<DataManager>(context, listen: false);
-                final bookmarkList = dataManager.bookmarkLists.firstWhere((list) => list.restaurants.contains(restaurant));
-                dataManager.removeRestaurantFromBookmarkList(restaurant, bookmarkList);
+                dataManager.removeRestaurantFromBookmarkList(restaurant, widget.bookmarkList);
                 setState(() {
-                  widget.bookmarkList.restaurants.remove(restaurant); // 리스트에서 식당 제거
+                  widget.bookmarkList.restaurants.removeWhere((r) => r.enName == restaurant.enName);
                 });
                 Navigator.of(context).pop();
               },
-              child: Text('Delete', style: TextStyle(color: Colors.red)),
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
           ],
         );

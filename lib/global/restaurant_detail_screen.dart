@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/restaurant.dart';
 import '../models/review.dart';
 import 'package:provider/provider.dart';
@@ -7,11 +9,10 @@ import '../services/data_manager.dart';
 class RestaurantDetailPage extends StatefulWidget {
   final Restaurant restaurant;
 
-  const RestaurantDetailPage({Key? key, required this.restaurant})
-      : super(key: key);
+  const RestaurantDetailPage({Key? key, required this.restaurant}) : super(key: key);
 
   @override
-  State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
+  _RestaurantDetailPageState createState() => _RestaurantDetailPageState();
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
@@ -20,6 +21,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   int _currentTabIndex = 0;
   Map<String, bool> checkedLists = {};
   bool isFavorite = false;
+  TextEditingController _reviewController = TextEditingController();
 
   @override
   void initState() {
@@ -35,8 +37,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
 
     final dataManager = Provider.of<DataManager>(context, listen: false);
     dataManager.bookmarkLists.forEach((bookmarkList) {
-      checkedLists[bookmarkList.name] =
-          bookmarkList.restaurants.any((r) => r.enName == widget.restaurant.enName);
+      checkedLists[bookmarkList.name] = bookmarkList.restaurants.any((r) => r.enName == widget.restaurant.enName);
     });
     isFavorite = checkedLists.values.any((checked) => checked);
   }
@@ -59,8 +60,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         leading: const BackButton(color: Colors.black),
         title: Opacity(
           opacity: _appBarOpacity,
-          child: Text(widget.restaurant.koName,
-              style: const TextStyle(color: Colors.black)),
+          child: Text(widget.restaurant.koName, style: const TextStyle(color: Colors.black)),
         ),
       ),
       body: CustomScrollView(
@@ -92,21 +92,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.restaurant.koName,
-                              style: const TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
-                            ),
-                            Text(widget.restaurant.koCategory,
-                                style: const TextStyle(fontSize: 16)),
+                            Text(widget.restaurant.koName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                            Text(widget.restaurant.koCategory, style: const TextStyle(fontSize: 16)),
                           ],
                         ),
                       ),
                       IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : Colors.black,
-                        ),
+                        icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border, color: isFavorite ? Colors.red : Colors.black),
                         onPressed: () => _showBookmarkDialog(context, dataManager),
                       ),
                     ],
@@ -136,6 +128,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showReviewDialog(context),
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -236,14 +232,11 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.restaurant.koAddress,
-              style: const TextStyle(fontSize: 14)),
+          Text(widget.restaurant.koAddress, style: const TextStyle(fontSize: 14)),
           const SizedBox(height: 4),
-          Text("${widget.restaurant.tel}",
-              style: const TextStyle(fontSize: 14)),
+          Text("${widget.restaurant.tel}", style: const TextStyle(fontSize: 14)),
           const SizedBox(height: 16),
-          const Text("Menu",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text("Menu", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           buildMenuGrid(),
           const SizedBox(height: 16),
           Center(
@@ -267,9 +260,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         crossAxisSpacing: 4,
         childAspectRatio: 1,
       ),
-      itemCount: widget.restaurant.menus.length < 4
-          ? widget.restaurant.menus.length
-          : 4,
+      itemCount: widget.restaurant.menus.length < 4 ? widget.restaurant.menus.length : 4,
       itemBuilder: (context, index) {
         final menu = widget.restaurant.menus[index];
         return Column(
@@ -295,15 +286,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                // 리뷰 쓰기 버튼 클릭 시 로직 추가
-              },
-              child: const Text("Write a Review"),
-            ),
-          ),
-          const SizedBox(height: 16),
           ...reviews.map((review) {
             return SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -314,15 +296,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        review.koUsername,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
+                      Text(review.enUsername, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
-                      Text(
-                        review.enContent,
-                        style: const TextStyle(fontSize: 13, color: Colors.black),
-                      ),
+                      Text(review.enContent, style: const TextStyle(fontSize: 13, color: Colors.black)),
                     ],
                   ),
                 ),
@@ -356,14 +332,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(menu.koName,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(menu.koName, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
-                      Text(menu.enPrice,
-                          style: const TextStyle(fontSize: 12, color: Colors.black)),
+                      Text(menu.enPrice, style: const TextStyle(fontSize: 12, color: Colors.black)),
                     ],
                   ),
                 ],
@@ -374,6 +345,95 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       ),
     );
   }
+
+  void _showReviewDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Write a Review"),
+          content: TextField(
+            controller: _reviewController,
+            maxLines: 3,
+            decoration: const InputDecoration(hintText: "Write your review here"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                _saveReview(_reviewController.text);
+                Navigator.of(context).pop();
+              },
+              child: const Text("Submit"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _saveReview(String reviewContent) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DatabaseReference userRef = FirebaseDatabase.instance.reference().child('users').child(user.uid);
+      DataSnapshot userSnapshot = await userRef.once().then((event) => event.snapshot);
+
+      if (userSnapshot.exists) {
+        Map<dynamic, dynamic> userData = userSnapshot.value as Map<dynamic, dynamic>;
+        String username = userData['username'] ?? 'Anonymous';
+
+        // 현재 날짜와 시간을 생성
+        String createdAt = DateTime.now().toIso8601String();
+
+        // 새 리뷰 객체 생성
+        Review newReview = Review(
+          enUsername: username,
+          enContent: reviewContent,
+          createdAt: createdAt,
+        );
+
+        DatabaseReference restaurantRef = FirebaseDatabase.instance.ref().child('restaurants').child(widget.restaurant.id.toString());
+        DataSnapshot restaurantSnapshot = await restaurantRef.once().then((event) => event.snapshot);
+
+        List<dynamic> reviews;
+        if (restaurantSnapshot.value != null && (restaurantSnapshot.value as Map)['reviews'] is List) {
+          reviews = List.from((restaurantSnapshot.value as Map)['reviews']);
+        } else {
+          reviews = [];
+        }
+        reviews.add(newReview.toJson());
+        await restaurantRef.child('reviews').set(reviews);
+
+        // 리뷰를 유저 데이터에 추가
+        DatabaseReference userReviewsRef = userRef.child('reviews');
+        DataSnapshot userReviewsSnapshot = await userReviewsRef.once().then((event) => event.snapshot);
+
+        List<dynamic> userReviews;
+        if (userReviewsSnapshot.value is List) {
+          userReviews = List.from(userReviewsSnapshot.value as List);
+        } else {
+          userReviews = [];
+        }
+        userReviews.add({
+          'restaurantId': widget.restaurant.id,
+          'review': newReview.toJson(),
+        });
+        await userReviewsRef.set(userReviews);
+
+        // 리뷰가 추가된 후 UI 업데이트
+        setState(() {
+          widget.restaurant.reviews.add(newReview);
+        });
+      }
+    }
+  }
+
+
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
@@ -394,15 +454,12 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => maxHeight;
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return child;
   }
 
   @override
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return oldDelegate.minHeight != minHeight ||
-        oldDelegate.maxHeight != maxHeight ||
-        oldDelegate.child != child;
+    return oldDelegate.minHeight != minHeight || oldDelegate.maxHeight != maxHeight || oldDelegate.child != child;
   }
 }
