@@ -22,7 +22,8 @@ class NearbyPage extends StatefulWidget {
   State<NearbyPage> createState() => _NearbyPageState();
 }
 
-class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMixin {
+class _NearbyPageState extends State<NearbyPage>
+    with AutomaticKeepAliveClientMixin {
   final TextEditingController _searchController = TextEditingController();
   final Completer<NaverMapController> mapControllerCompleter = Completer();
   final panelController = PanelController();
@@ -50,10 +51,12 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
   bool get wantKeepAlive => true;
 
   _setCurrentLocation() async {
-    LocationPermission permission = await MapPermissionUtils
-        .checkAndRequestLocationPermission();
-    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    LocationPermission permission =
+        await MapPermissionUtils.checkAndRequestLocationPermission();
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
       NaverMapController controller = await mapControllerCompleter.future;
     }
   }
@@ -69,8 +72,7 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
           context,
           MaterialPageRoute(
             builder: (context) => RestaurantDetailPage(restaurant: restaurant),
-          )
-      );
+          ));
     });
     controller.addOverlay(marker);
   }
@@ -80,8 +82,8 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
     final dataManager = Provider.of<DataManager>(context, listen: false);
 
     controller.clearOverlays();
-    _filteredRestaurants = dataManager.targetRestaurants;  // 타겟 식당으로 초기화
-    _applyFilters();  // 필터 적용
+    _filteredRestaurants = dataManager.targetRestaurants; // 타겟 식당으로 초기화
+    _applyFilters(); // 필터 적용
 
     for (var restaurant in _filteredRestaurants) {
       _addMarker(restaurant.latitude, restaurant.longitude, restaurant);
@@ -97,7 +99,7 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
 
   void _updateMarkers() async {
     NaverMapController controller = await mapControllerCompleter.future;
-    controller.clearOverlays();  // 기존 마커 제거
+    controller.clearOverlays(); // 기존 마커 제거
 
     for (var restaurant in _filteredRestaurants) {
       _addMarker(restaurant.latitude, restaurant.longitude, restaurant);
@@ -136,7 +138,7 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);  // 원래 상태 유지 by AutomaticKeepAliveClientMixin
+    super.build(context); // 원래 상태 유지 by AutomaticKeepAliveClientMixin
     final panelHeightOpen = MediaQuery.of(context).size.height * 0.65;
     final panelHeightClosed = MediaQuery.of(context).size.height * 0.05;
 
@@ -146,9 +148,7 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
           NaverMap(
             options: const NaverMapViewOptions(
               initialCameraPosition: NCameraPosition(
-                  target: NLatLng(start_latitude, start_longitude),
-                  zoom: 15
-              ),
+                  target: NLatLng(start_latitude, start_longitude), zoom: 15),
               indoorEnable: false,
               locationButtonEnable: true,
               consumeSymbolTapEvents: true,
@@ -186,7 +186,10 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
                 readOnly: true,
                 onCancelTap: () {},
                 controller: _searchController,
-                isOutlined: PanelPositionUtils.isSlidingPanelOpen(_slidingPosition) ? true : false,
+                isOutlined:
+                    PanelPositionUtils.isSlidingPanelOpen(_slidingPosition)
+                        ? true
+                        : false,
                 focusNode: focusNode,
                 onTapOutSide: (pointerDownEvent) {
                   focusNode.unfocus();
@@ -194,18 +197,18 @@ class _NearbyPageState extends State<NearbyPage> with AutomaticKeepAliveClientMi
                 onTap: () {
                   Future.delayed(Duration.zero, () {
                     if (focusNode.hasFocus) {
-                      Navigator.of(context).push(
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) => const SearchPage(),
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              );
-                            },
-                            transitionDuration: const Duration(milliseconds: 100),
-                          )
-                      );
+                      Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const SearchPage(),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                        transitionDuration: const Duration(milliseconds: 100),
+                      ));
                     }
                   });
                 },

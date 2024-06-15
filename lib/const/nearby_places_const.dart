@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NearbyPlacesConst {
-
+  static const String noSpecialPreference = "No Special Preference";
   static const String vegan = "Vegan";
   static const String lactoVegetarian = "Lacto-Vegetarian";
   static const String pescatarian = "Pescatarian";
@@ -11,6 +11,7 @@ class NearbyPlacesConst {
   static const String dairyFree = "Dairy-Free";
 
   static List<String> nearbyPlacesTexts = [
+    "No Special Preference",
     "Vegan",
     "Lacto-Vegetarian",
     "Pescatarian",
@@ -22,21 +23,14 @@ class NearbyPlacesConst {
 }
 
 class NearbyPlacesIconsConst {
-  static const IconData vegan = Icons.restaurant;
-  static const IconData lactoVegetarian = Icons.restaurant;
-  static const IconData pescatarian = Icons.restaurant;
-  static const IconData halal = Icons.restaurant;
-  static const IconData kosher = Icons.restaurant;
-  static const IconData eggFree = Icons.restaurant;
-  static const IconData dairyFree = Icons.restaurant;
-
-  static List<IconData> nearbyPlacesIcons = [
-    Icons.restaurant,
-    Icons.restaurant,
-    Icons.restaurant,
-    Icons.restaurant,
-    Icons.restaurant,
-    Icons.restaurant,
-    Icons.restaurant,
-  ];
+  static const Map<String, IconData> nearbyPlacesIcons = {
+    "No Special Preference": Icons.not_interested,
+    "Vegan": Icons.eco,
+    "Lacto-Vegetarian": Icons.local_florist,
+    "Pescatarian": Icons.set_meal,
+    "Halal": Icons.restaurant_menu,
+    "Kosher": Icons.verified_user,
+    "Egg-Free": Icons.egg,
+    "Dairy-Free": Icons.no_meals,
+  };
 }
