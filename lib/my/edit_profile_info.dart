@@ -1,7 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class EditProfileInfoPage extends StatefulWidget {
   final String initialUserName;
@@ -28,6 +29,7 @@ class _EditProfileInfoPageState extends State<EditProfileInfoPage> {
     super.initState();
     _nameController = TextEditingController(text: widget.initialUserName);
     _emailController = TextEditingController(text: widget.initialEmail);
+    _fetchProfileInfo();
   }
 
   @override
@@ -47,6 +49,35 @@ class _EditProfileInfoPageState extends State<EditProfileInfoPage> {
     }
   }
 
+  Future<void> _fetchProfileInfo() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DatabaseReference userRef =
+          FirebaseDatabase.instance.ref().child('users').child(user.uid);
+      DataSnapshot snapshot = await userRef.get();
+      if (snapshot.exists) {
+        Map data = snapshot.value as Map;
+        setState(() {
+          _nameController.text = data['name'] ?? widget.initialUserName;
+          _emailController.text = data['email'] ?? widget.initialEmail;
+        });
+      }
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DatabaseReference userRef =
+          FirebaseDatabase.instance.ref().child('users').child(user.uid);
+      await userRef.update({
+        'name': _nameController.text,
+        'email': _emailController.text,
+      });
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,10 +86,7 @@ class _EditProfileInfoPageState extends State<EditProfileInfoPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.save),
-            onPressed: () {
-              // Save changes logic here
-              Navigator.pop(context);
-            },
+            onPressed: _saveProfile, // Save changes logic here
           ),
         ],
       ),
