@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'package:mealmatch/services/data_manager.dart';
+import '../../global/restaurant_detail_screen.dart';
 import '../../models/restaurant.dart';
 import 'restaurant_info_widget.dart';
 
@@ -37,7 +38,7 @@ class PanelWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              buildRestaurantList(),
+              buildRestaurantList(context),
               const SizedBox(height: 24),
             ],
           ),
@@ -63,7 +64,7 @@ class PanelWidget extends StatelessWidget {
 
   void togglePanel() => panelController.isPanelOpen ? panelController.close() : panelController.open();
 
-  Widget buildRestaurantList() {
+  Widget buildRestaurantList(BuildContext context) {
     if (restaurants.isEmpty) {
       return const Center(
         child: Padding(
@@ -82,9 +83,20 @@ class PanelWidget extends StatelessWidget {
     return Column(
       children: List.generate(itemCount, (index) {
         final restaurant = restaurants[index];
-        return RestaurantInfoWidget(
-          restaurant: restaurant, // Restaurant 객체를 직접 전달
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RestaurantDetailPage(restaurant: restaurant),
+              ),
+            );
+          },
+          child: RestaurantInfoWidget(restaurant: restaurant),
         );
+        /*return RestaurantInfoWidget(
+          restaurant: restaurant, // Restaurant 객체를 직접 전달
+        );*/
       }),
     );
   }

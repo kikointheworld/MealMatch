@@ -47,19 +47,26 @@ class _RestaurantInfoWidgetState extends State<RestaurantInfoWidget> {
           items: widget.restaurant.mainImages?.map((item) => Image.network(item, fit: BoxFit.cover)).toList(),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(
             children: <Widget>[
-              Text(
-                widget.restaurant.enName,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.restaurant.koName,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.restaurant.koCategory,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 8),
-              Text(
-                widget.restaurant.enCategory,
-                textAlign: TextAlign.right,
-              ),
-              const Spacer(),
               IconButton(
                 icon: Icon(
                   isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -74,17 +81,33 @@ class _RestaurantInfoWidgetState extends State<RestaurantInfoWidget> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(
-            widget.restaurant.enAddress,
-            overflow: TextOverflow.ellipsis,
+          child: Row(
+            children: [
+              Icon(Icons.location_on, size: 16),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  widget.restaurant.koAddress,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(
-            widget.restaurant.enOpeningHours,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
+          child: Row(
+            children: [
+              Icon(Icons.access_time, size: 16),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  "${widget.restaurant.mainOpeningHours}",
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 8.0),
@@ -126,14 +149,14 @@ class _RestaurantInfoWidgetState extends State<RestaurantInfoWidget> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 _saveBookmarkChanges(dataManager);
                 Navigator.of(context).pop();
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -175,7 +198,7 @@ class _RestaurantInfoWidgetState extends State<RestaurantInfoWidget> {
         itemBuilder: (context, index) {
           var review = reviews[index];
           return Card(
-            color: Colors.lightGreen[100],
+            color: Colors.lightGreenAccent[100],
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(

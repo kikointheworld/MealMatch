@@ -232,19 +232,58 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.restaurant.koAddress, style: const TextStyle(fontSize: 14)),
+          Row(
+            children: [
+              Icon(Icons.location_on, size: 16),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  widget.restaurant.koAddress,
+                  style: const TextStyle(fontSize: 14),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 4),
-          Text("${widget.restaurant.tel}", style: const TextStyle(fontSize: 14)),
+          Row(
+            children: [
+              Icon(Icons.phone, size: 16),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  "${widget.restaurant.tel}",
+                  style: const TextStyle(fontSize: 14),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(Icons.access_time, size: 16),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  "${widget.restaurant.mainOpeningHours}",
+                  style: const TextStyle(fontSize: 14),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           const Text("Menu", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           buildMenuGrid(),
           const SizedBox(height: 16),
-          Center(
-            child: ElevatedButton(
-              onPressed: () => _scrollToSection(1),
-              child: const Text("More Menu"),
+          if (widget.restaurant.menus.length > 4)
+            Center(
+              child: ElevatedButton(
+                onPressed: () => _scrollToSection(1),
+                child: const Text("More Menu"),
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -266,13 +305,18 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         return Column(
           children: [
             Expanded(
-              child: Image.network(
-                menu.imageUrl ?? '',
+              child: menu.imageUrl != null && menu.imageUrl!.isNotEmpty
+                  ? Image.network(
+                menu.imageUrl!,
                 fit: BoxFit.cover,
-              ),
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset('image/food.jpg', fit: BoxFit.cover);
+                },
+              )
+                  : Image.asset('image/food.jpg', fit: BoxFit.cover),
             ),
             const SizedBox(height: 4),
-            Text(menu.koName, style: const TextStyle(fontSize: 12)),
+            Text(menu.koName, style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis,),
             const SizedBox(height: 4),
             Text(menu.enPrice, style: const TextStyle(fontSize: 12)),
           ],
@@ -290,6 +334,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             return SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Card(
+                color: Colors.lightGreenAccent[100],
                 margin: const EdgeInsets.symmetric(vertical: 4),
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -317,25 +362,44 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: widget.restaurant.menus.map((menu) {
           return Card(
+            color: Colors.greenAccent[100],
             margin: const EdgeInsets.symmetric(vertical: 4),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Image.network(
-                    menu.imageUrl ?? '',
+                  menu.imageUrl != null && menu.imageUrl!.isNotEmpty
+                      ? Image.network(
+                    menu.imageUrl!,
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
-                  ),
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset('image/food.jpg', width: 100, height: 100, fit: BoxFit.cover);
+                    },
+                  )
+                      : Image.asset('image/food.jpg', width: 100, height: 100, fit: BoxFit.cover),
                   const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(menu.koName, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      Text(menu.enPrice, style: const TextStyle(fontSize: 12, color: Colors.black)),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          menu.koName,
+                          maxLines: 2,
+                          overflow: TextOverflow.visible,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          softWrap: true,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          menu.enPrice,
+                          style: const TextStyle(fontSize: 12, color: Colors.black),
+                          overflow: TextOverflow.visible,
+                          softWrap: true,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -432,8 +496,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       }
     }
   }
-
-
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
