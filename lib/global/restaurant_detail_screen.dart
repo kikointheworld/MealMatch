@@ -60,7 +60,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         leading: const BackButton(color: Colors.black),
         title: Opacity(
           opacity: _appBarOpacity,
-          child: Text(widget.restaurant.koName, style: const TextStyle(color: Colors.black)),
+          child: Text(widget.restaurant.enName, style: const TextStyle(color: Colors.black)),
         ),
       ),
       body: CustomScrollView(
@@ -92,8 +92,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(widget.restaurant.koName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                            Text(widget.restaurant.koCategory, style: const TextStyle(fontSize: 16)),
+                            Text(widget.restaurant.enName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                            Text(widget.restaurant.enCategory, style: const TextStyle(fontSize: 16)),
                           ],
                         ),
                       ),
@@ -238,7 +238,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
-                  widget.restaurant.koAddress,
+                  widget.restaurant.enAddress,
                   style: const TextStyle(fontSize: 14),
                   overflow: TextOverflow.visible,
                 ),
@@ -316,7 +316,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   : Image.asset('image/food.jpg', fit: BoxFit.cover),
             ),
             const SizedBox(height: 4),
-            Text(menu.koName, style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis,),
+            Text(menu.enName, style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis,),
             const SizedBox(height: 4),
             Text(menu.enPrice, style: const TextStyle(fontSize: 12)),
           ],
@@ -385,7 +385,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          menu.koName,
+                          menu.enName,
                           maxLines: 2,
                           overflow: TextOverflow.visible,
                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

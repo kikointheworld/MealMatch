@@ -65,7 +65,9 @@ class _NearbyPageState extends State<NearbyPage>
     NaverMapController controller = await mapControllerCompleter.future;
     final marker = NMarker(
       position: NLatLng(lat, lon),
-      id: restaurant.koName,
+      id: restaurant.enName,
+      size: const Size(25, 35),
+      caption: NOverlayCaption(text: restaurant.enName, minZoom: 18, maxZoom: 21),
     );
     marker.setOnTapListener((overlay) {
       Navigator.push(
@@ -224,7 +226,7 @@ class _NearbyPageState extends State<NearbyPage>
                       await _fetchRestaurants();
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text('현 지도에서 검색'),
+                    label: const Text('Search this area'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.green,

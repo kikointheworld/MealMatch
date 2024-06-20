@@ -55,13 +55,13 @@ class _RestaurantInfoWidgetState extends State<RestaurantInfoWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.restaurant.koName,
+                      widget.restaurant.enName,
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      widget.restaurant.koCategory,
+                      widget.restaurant.enCategory,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -87,7 +87,7 @@ class _RestaurantInfoWidgetState extends State<RestaurantInfoWidget> {
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
-                  widget.restaurant.koAddress,
+                  widget.restaurant.enAddress,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
