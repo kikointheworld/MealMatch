@@ -9,6 +9,7 @@ class Menu {
   final String? koContent;
   final String koName;
   final String koPrice;
+  final Map<String, bool> classifications;
 
   Menu({
     this.enContent,
@@ -19,6 +20,7 @@ class Menu {
     this.koContent,
     required this.koName,
     required this.koPrice,
+    required this.classifications
   });
 
   factory Menu.fromJson(Map<dynamic, dynamic> json) {
@@ -31,6 +33,7 @@ class Menu {
       koContent: json["ko_content"],
       koName: json["ko_name"],
       koPrice: json["ko_price"],
+      classifications: json['new_menu_classification'] != null ? Map<String, bool>.from(json['new_menu_classification']) : {},
     );
   }
 
@@ -48,6 +51,7 @@ class Menu {
       "ko_content": koContent,
       "ko_name": koName,
       "ko_price": koPrice,
+      "classification": classifications,
     };
   }
 }
