@@ -42,7 +42,7 @@ class Restaurant {
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     return Restaurant(
-      id: json["id"], // ID 파싱 추가
+      id: json["id"] ?? 999, // ID가 null인 경우 기본값 0 설정
       enName: json["name"]?["enName"] ?? '',
       enAddress: json["address"]?["enAddress"] ?? '',
       enCategory: json["category"]?["enCategory"] ?? '',

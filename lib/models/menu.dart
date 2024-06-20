@@ -37,6 +37,14 @@ class Menu {
     );
   }
 
+  // 추가된 메서드: True인 classifications만 반환
+  List<String> getTrueClassifications() {
+    return classifications.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+  }
+
   static List<Menu> fromList(List<dynamic> list) {
     return list.map((item) => Menu.fromJson(item as Map<String, dynamic>)).toList();
   }

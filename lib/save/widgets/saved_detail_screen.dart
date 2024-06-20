@@ -77,7 +77,6 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                      // 줄바꿈 가능하게 수정
                                       maxLines: 2,
                                       softWrap: true,
                                     ),
@@ -170,7 +169,7 @@ class _BookmarkDetailPageState extends State<BookmarkDetailPage> {
           },
         );
       },
-    ).then((_) => setState(() {})); // 다이얼로그가 닫힌 후에 상태 업데이트
+    ).then((_) => setState(() {}));
   }
 
   void _showDeleteConfirmationDialog(BuildContext context, Restaurant restaurant) {

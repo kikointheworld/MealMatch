@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:mealmatch/models/restaurant.dart';
 import 'package:mealmatch/models/bookmark_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class DataManager with ChangeNotifier {
   static final DataManager _instance = DataManager._internal();
@@ -76,17 +76,17 @@ class DataManager with ChangeNotifier {
       List<dynamic> dataList = snapshot.value as List<dynamic>;
       searchResults = dataList
           .map((x) {
-            if (x is Map<dynamic, dynamic>) {
-              Restaurant restaurant =
-                  Restaurant.fromJson(Map<String, dynamic>.from(x));
-              if (restaurant.enName
-                  .toLowerCase()
-                  .contains(query.toLowerCase())) {
-                return restaurant;
-              }
-            }
-            return null;
-          })
+        if (x is Map<dynamic, dynamic>) {
+          Restaurant restaurant =
+          Restaurant.fromJson(Map<String, dynamic>.from(x));
+          if (restaurant.enName
+              .toLowerCase()
+              .contains(query.toLowerCase())) {
+            return restaurant;
+          }
+        }
+        return null;
+      })
           .where((x) => x != null)
           .toList()
           .cast<Restaurant>();
@@ -156,7 +156,7 @@ class DataManager with ChangeNotifier {
         return;
       }
       DatabaseReference userListsRef =
-          _dbRef.child('users').child(userId).child('bookmarkLists');
+      _dbRef.child('users').child(userId).child('bookmarkLists');
 
       DatabaseEvent event = await userListsRef.once();
       DataSnapshot snapshot = event.snapshot;
@@ -181,7 +181,7 @@ class DataManager with ChangeNotifier {
         return;
       }
       DatabaseReference userListsRef =
-          _dbRef.child('users').child(userId).child('bookmarkLists');
+      _dbRef.child('users').child(userId).child('bookmarkLists');
 
       DatabaseEvent event = await userListsRef.once();
       DataSnapshot snapshot = event.snapshot;
@@ -201,7 +201,7 @@ class DataManager with ChangeNotifier {
   void _loadBookmarkLists(User user) async {
     String userId = user.uid;
     DatabaseReference userListsRef =
-        _dbRef.child('users').child(userId).child('bookmarkLists');
+    _dbRef.child('users').child(userId).child('bookmarkLists');
 
     userListsRef.onValue.listen((event) {
       final listsData = event.snapshot.value as Map<dynamic, dynamic>?;
@@ -215,17 +215,17 @@ class DataManager with ChangeNotifier {
             isPublic: value['isPublic'],
             restaurants: value['restaurants'] != null
                 ? (value['restaurants'] as Map<dynamic, dynamic>)
-                    .values
-                    .map((item) {
-                      if (item is Map<dynamic, dynamic>) {
-                        return Restaurant.fromJson(
-                            Map<String, dynamic>.from(item));
-                      } else {
-                        return null;
-                      }
-                    })
-                    .whereType<Restaurant>()
-                    .toList()
+                .values
+                .map((item) {
+              if (item is Map<dynamic, dynamic>) {
+                return Restaurant.fromJson(
+                    Map<String, dynamic>.from(item));
+              } else {
+                return null;
+              }
+            })
+                .whereType<Restaurant>()
+                .toList()
                 : [],
           );
         }).toList();
@@ -243,7 +243,7 @@ class DataManager with ChangeNotifier {
     if (user != null) {
       String userId = user.uid;
       DatabaseReference userListsRef =
-          _dbRef.child('users').child(userId).child('bookmarkLists');
+      _dbRef.child('users').child(userId).child('bookmarkLists');
 
       DatabaseEvent event = await userListsRef.once();
       DataSnapshot snapshot = event.snapshot;
@@ -271,7 +271,7 @@ class DataManager with ChangeNotifier {
     if (user != null) {
       String userId = user.uid;
       DatabaseReference userListsRef =
-          _dbRef.child('users').child(userId).child('bookmarkLists');
+      _dbRef.child('users').child(userId).child('bookmarkLists');
 
       DatabaseEvent event = await userListsRef.once();
       DataSnapshot snapshot = event.snapshot;
@@ -284,11 +284,11 @@ class DataManager with ChangeNotifier {
             final restaurantsSnapshot = await restaurantsRef.once();
             if (restaurantsSnapshot.snapshot.exists) {
               Map<dynamic, dynamic> restaurantsData =
-                  restaurantsSnapshot.snapshot.value as Map<dynamic, dynamic>;
+              restaurantsSnapshot.snapshot.value as Map<dynamic, dynamic>;
               restaurantsData.forEach((restaurantKey, restaurantValue) async {
                 if (Restaurant.fromJson(
-                            Map<String, dynamic>.from(restaurantValue))
-                        .enName ==
+                    Map<String, dynamic>.from(restaurantValue))
+                    .enName ==
                     restaurant.enName) {
                   await restaurantsRef.child(restaurantKey).remove();
                   bookmarkList.restaurants

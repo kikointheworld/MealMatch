@@ -121,9 +121,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                if (_currentTabIndex == 0) buildHomeContent(),
-                if (_currentTabIndex == 1) buildMenuContent(),
-                if (_currentTabIndex == 2) buildReviewList(widget.restaurant.reviews),
+                if (_currentTabIndex == 0) buildHomeContent(),  // 홈 탭에 대한 내용
+                if (_currentTabIndex == 1) buildMenuContent(),  // 메뉴 탭에 대한 내용
+                if (_currentTabIndex == 2) buildReviewList(widget.restaurant.reviews), // 리뷰 탭에 대한 내용
               ],
             ),
           ),
@@ -275,7 +275,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           ),
           const SizedBox(height: 16),
           const Text("Menu", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          buildMenuGrid(),
+          buildMenuGrid(false), // Home 탭에서는 classification 숨기기
           const SizedBox(height: 16),
           if (widget.restaurant.menus.length > 4)
             Center(
@@ -289,7 +289,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     );
   }
 
-  Widget buildMenuGrid() {
+  Widget buildMenuGrid(bool showClassification) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -316,9 +316,25 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   : Image.asset('image/food.jpg', fit: BoxFit.cover),
             ),
             const SizedBox(height: 4),
-            Text(menu.koName, style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis,),
+            Text(
+              menu.koName,
+              style: const TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+            ),
             const SizedBox(height: 4),
             Text(menu.enPrice, style: const TextStyle(fontSize: 12)),
+            if (showClassification)
+              Wrap(
+                spacing: 6.0,
+                runSpacing: 6.0,
+                children: menu.classifications.entries
+                    .where((entry) => entry.value == true)
+                    .map((entry) => Chip(
+                  label: Text(entry.key, style: const TextStyle(fontSize: 12)),
+                  backgroundColor: Colors.green[100],
+                ))
+                    .toList(),
+              ),
           ],
         );
       },
@@ -361,45 +377,62 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: widget.restaurant.menus.map((menu) {
+          List<Widget> classificationWidgets = menu.getTrueClassifications().map((classification) {
+            return Chip(
+              label: Text(classification, style: const TextStyle(fontSize: 12)),
+              backgroundColor: Colors.green[100],
+            );
+          }).toList();
           return Card(
             color: Colors.greenAccent[100],
             margin: const EdgeInsets.symmetric(vertical: 4),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  menu.imageUrl != null && menu.imageUrl!.isNotEmpty
-                      ? Image.network(
-                    menu.imageUrl!,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset('image/food.jpg', width: 100, height: 100, fit: BoxFit.cover);
-                    },
-                  )
-                      : Image.asset('image/food.jpg', width: 100, height: 100, fit: BoxFit.cover),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          menu.koName,
-                          maxLines: 2,
-                          overflow: TextOverflow.visible,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          softWrap: true,
+                  Row(
+                    children: [
+                      menu.imageUrl != null && menu.imageUrl!.isNotEmpty
+                          ? Image.network(
+                        menu.imageUrl!,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset('image/food.jpg', width: 100, height: 100, fit: BoxFit.cover);
+                        },
+                      )
+                          : Image.asset('image/food.jpg', width: 100, height: 100, fit: BoxFit.cover),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              menu.koName,
+                              maxLines: 2,
+                              overflow: TextOverflow.visible,
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              softWrap: true,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              menu.enPrice,
+                              style: const TextStyle(fontSize: 12, color: Colors.black),
+                              overflow: TextOverflow.visible,
+                              softWrap: true,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          menu.enPrice,
-                          style: const TextStyle(fontSize: 12, color: Colors.black),
-                          overflow: TextOverflow.visible,
-                          softWrap: true,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: classificationWidgets,
                   ),
                 ],
               ),
@@ -409,6 +442,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       ),
     );
   }
+
+
 
   void _showReviewDialog(BuildContext context) {
     showDialog(
