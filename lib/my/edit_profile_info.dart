@@ -58,8 +58,8 @@ class _EditProfileInfoPageState extends State<EditProfileInfoPage> {
       if (snapshot.exists) {
         Map data = snapshot.value as Map;
         setState(() {
-          _nameController.text = data['name'] ?? widget.initialUserName;
-          _emailController.text = data['email'] ?? widget.initialEmail;
+          _nameController.text = data['name'] ?? user.displayName;
+          _emailController.text = data['email'] ?? user.email;
         });
       }
     }

@@ -17,8 +17,8 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  String _userName = "Tamer";
-  String _userEmail = "tamer@gmail.com";
+  String _userName = "Sunny";
+  String _userEmail = "sunny@gmail.com";
 
   @override
   void initState() {
